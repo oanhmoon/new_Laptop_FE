@@ -377,7 +377,7 @@ const CheckoutConfirmation = () => {
                                         <span> Thanh toán khi nhận hàng (COD)</span>
                                     </label>
                                 </div>
-                                {/* <div className="payment-option">
+                                <div className="payment-option">
                                     <input
                                         type="radio"
                                         id="in_app"
@@ -389,7 +389,7 @@ const CheckoutConfirmation = () => {
                                     <label htmlFor="in_app">
                                         <span> Thanh toán qua số dư ví TechWallet</span>
                                     </label>
-                                </div> */}
+                                </div>
                             </div>
                         </Panel>
                     </Collapse>

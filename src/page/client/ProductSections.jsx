@@ -299,7 +299,7 @@ const ProductSections = () => {
             <section className="featured-products-section">
                 <div className="container">
                     <div className="tabs-header">
-                        <h2 className="section-title">Sản Phẩm Nổi Bật</h2>
+                        <h2 className="section-title">Sản Phẩm Nổi Bật 1</h2>
                     </div>
                     <div className="products-grid-home-screen">
                         {bestsellerProducts.slice(0, 8).map((product) => (

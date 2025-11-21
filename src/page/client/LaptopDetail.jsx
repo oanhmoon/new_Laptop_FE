@@ -66,6 +66,10 @@ const LaptopDetail = () => {
         try {
             setLoading(true);
             const response = await dispatch(getProductDetailById(optionId));
+            console.log("📦 Dữ liệu productDetail trả về từ API:", response);
+    console.log("🖼️ Danh sách ảnh:", response?.product?.images);
+    console.log("🎨 Danh sách variant:", response?.productVariants);
+
             setProductDetail(response);
             const selectedOptionIndex = response?.productOptions.findIndex(option => option.id.toString() === id.toString());
 
@@ -200,6 +204,22 @@ const LaptopDetail = () => {
       : <StarOutlined key={i} className="star-outlined" />
   ));
 };
+//New
+    const [imageList, setImageList] = useState([]);
+    useEffect(() => {
+    if (!productDetail) return;
+
+    // Lấy option hiện tại
+    const option = productDetail.productOptions[selectedOption] || productDetail.productOptions[0];
+
+    // Lấy ảnh của option nếu có, còn không lấy ảnh mặc định của product
+    const images = option.images?.map(img => img.url) || productDetail.images?.map(img => img.url) || [];
+    setImageList(images);
+
+    // Reset ảnh chính về đầu tiên
+    setSelectedImage(0);
+}, [productDetail, selectedOption]);
+
 
     const specifications = [
         { name: "CPU", value: productDetail?.productOptions[selectedOption]?.cpu || '' },
@@ -402,7 +422,9 @@ useEffect(() => {
                         <Badge.Ribbon text="Mới" color="red" className={"ribbon"}>
                             <Image
                                 className="main-image"
-                                src={productDetail.product.images[selectedImage]?.url || banner1}
+                                src={imageList[selectedImage] || banner1}
+                                // src={productDetail.product.images[selectedImage]?.url || banner1}
+                                // src={productDetail.productOptions[selectedOption]?.images?.[selectedImage]?.url|| banner1}
                                 alt={productDetail.product.name}
                             />
                         </Badge.Ribbon>
@@ -418,7 +440,7 @@ useEffect(() => {
                             maxWidth: '800px',
                         }}
                     >
-                        {productDetail.product.images.map((image, index) => (
+                        {/* {productDetail.product.images.map((image, index) => (
                             <div
                                 key={index}
                                 className={`thumbnail ${selectedImage === index ? 'thumbnail-active' : ''}`}
@@ -451,7 +473,26 @@ useEffect(() => {
                                     }}
                                 />
                             </div>
-                        ))}
+                        ))} */}
+                        {productDetail.images.map((image, index) => (
+    <div
+      key={index}
+      className={`thumbnail ${selectedImage === index ? "thumbnail-active" : ""}`}
+      onClick={() => setSelectedImage(index)} // ⭐ đây đồng bộ
+      style={{
+        width: 80,
+        height: 80,
+        border: selectedImage === index ? "2px solid #1890ff" : "1px solid #ddd",
+      }}
+    >
+      <img
+        src={image.url}
+        alt={`Thumbnail ${index + 1}`}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        onError={(e) => { e.target.src = banner1; }}
+      />
+    </div>
+  ))}
                     </div>
                     <div className="features-grid">
                         <Card className="feature-card">
@@ -492,29 +533,29 @@ useEffect(() => {
                             <span className="rating-text">{productDetail.ratingAverage} / 5 ({productDetail.totalRating} đánh giá)</span>
                         </div> */}
                         <div className="rating-container">
-  <div className="stars">
-    {renderStars(productDetail?.ratingAverage, productDetail?.totalRating)}
-  </div>
+                            <div className="stars">
+                                {renderStars(productDetail?.ratingAverage, productDetail?.totalRating)}
+                            </div>
 
-  <span className="rating-text">
-    {productDetail?.totalRating > 0 ? (
-      <>
-        {productDetail.ratingAverage.toFixed(1)} / 5 ({productDetail.totalRating} đánh giá)
-      </>
-    ) : (
-      <>Chưa có đánh giá</>
-    )}
-  </span>
-</div>
+                            <span className="rating-text">
+                                {productDetail?.totalRating > 0 ? (
+                            <>
+                                {productDetail.ratingAverage.toFixed(1)} / 5 ({productDetail.totalRating} đánh giá)
+                            </>
+                                ) : (
+                                <>Chưa có đánh giá</>
+                                )}
+                            </span>
+                        </div>
 
                         <div className="price-container">
                             <span className="current-price">{formatPrice(calculatePrice())}</span>
                             {/* <span className="old-price">{formatPrice(calculatePrice() * 1.1)}</span>
                             <Badge count="-10%" style={{backgroundColor: '#f5222d'}}/> */}
                         </div>
-                        <p className="product-description">
-                            {productDetail.product.description}
-                        </p>
+                        <div
+                            dangerouslySetInnerHTML={{ __html: productDetail.product.description }}
+                        ></div>
                     </div>
 
                     {/* Configuration Selection */}
@@ -538,6 +579,8 @@ useEffect(() => {
                                             
                                         }
                                     }}
+                                    
+
                                     style={{ marginBottom: 16, position: 'relative' }}
                                 >
                                     {/* {index === 1 && ( // Assuming the second option is most popular
@@ -581,7 +624,7 @@ useEffect(() => {
                     </div>
 
                     {/* Color Selection */}
-                    <div className="color-section">
+                    {/* <div className="color-section">
                         <h3 className="section-title">Chọn màu sắc</h3>
                         <div className="color-options">
                             {productDetail.productVariants.map((variant, index) => (
@@ -594,10 +637,22 @@ useEffect(() => {
                                     }}
 
                                 >
-                                    <div
+                                    {/* <div
                                         className={`color-circle ${selectedVariant === index ? 'color-circle-active' : ''}`}
                                         style={{ backgroundColor: getColorHex(variant.color) }}
-                                    />
+                                    /> */}
+                                    {/* <div
+          className={`color-circle ${selectedVariant === index ? 'color-circle-active' : ''}`}
+        >
+          <img
+            src={variant.imageUrl}   // ✅ dùng đúng key
+            alt={variant.color}
+            className="color-image"
+            onError={(e) => { e.target.style.display = 'none'; }} // fallback nếu ảnh lỗi
+          />
+        </div>
+
+
                                     <span className={`color-name ${selectedVariant === index ? 'color-name-active' : ''}`}>
                                         {variant.color}
                                     </span>
@@ -607,7 +662,44 @@ useEffect(() => {
                                 </div>
                             ))}
                         </div>
+                    </div> */}
+
+                    <div className="color-section">
+                        <h3 className="section-title">Chọn màu sắc</h3>
+                        <div className="color-options">
+                            {productDetail.productVariants.map((variant, index) => (
+                                <div
+                                    key={variant.id}
+                                    className={`color-option ${selectedVariant === index ? 'color-option-active' : ''}`}
+                                    onClick={() => {
+                                        setVariantId(variant.id);
+                                        setSelectedVariant(index);
+                                    }}
+                                >
+                                    <div
+                                        className={`color-square ${selectedVariant === index ? 'color-square-active' : ''}`}
+                                    >
+                                        <img
+                                            src={variant.imageUrl}
+                                            alt={variant.color}
+                                            className="color-image"
+                                            onError={(e) => { e.target.style.display = 'none'; }}
+                                        />
+                                    </div>
+
+                                    <span
+                                        className={`color-name ${selectedVariant === index ? 'color-name-active' : ''}`}
+                                    >
+                                        {variant.color}
+                                    </span>
+                                    <span className="color-price-adjustment">
+                                        +{formatPrice(variant.priceDiff)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+
 
                     {/* Action Buttons */}
                     <div className="action-buttons">
@@ -632,18 +724,16 @@ useEffect(() => {
                                 <HeartOutlined />
                                 Yêu thích
                             </Button> */}
-                            <Button
-    size="large"
-    className="secondary-btn"
-    onClick={handleFavorite}
-    style={{
-        color: isFavorite ? "#1890ff" : "inherit",
-        borderColor: isFavorite ? "#1890ff" : undefined,
-    }}
->
-    {isFavorite ? <HeartFilled style={{ color: "#1890ff" }} /> : <HeartOutlined />}
-    {isFavorite ? "Đã yêu thích" : "Yêu thích"}
-</Button>
+                            <Button size="large" className="secondary-btn"
+                                onClick={handleFavorite}
+                                style={{
+                                    color: isFavorite ? "#1890ff" : "inherit",
+                                    borderColor: isFavorite ? "#1890ff" : undefined,
+                                }}
+                            >
+                                {isFavorite ? <HeartFilled style={{ color: "#1890ff" }} /> : <HeartOutlined />}
+                                {isFavorite ? "Đã yêu thích" : "Yêu thích"}
+                            </Button>
 
                         </div>
                     </div>
@@ -681,9 +771,9 @@ useEffect(() => {
                         <Card>
                             <div className="product-description-content">
                                 <h3>{productDetail.product.name} - Hiệu năng vượt trội, thiết kế đỉnh cao</h3>
-                                <p>
-                                    {productDetail.product.description}
-                                </p>
+                                <div
+                                    dangerouslySetInnerHTML={{ __html: productDetail.product.description }}
+                                ></div>
 
                                 <h4>Hiệu năng vượt trội</h4>
                                 <p>
@@ -724,30 +814,30 @@ useEffect(() => {
                             </div> */}
 
                             <div className="reviews-header">
-  <div className="rating-overview">
-    <div className="rating-score">
-      {productDetail?.totalRating > 0
-        ? productDetail.ratingAverage.toFixed(1)
-        : "–"}
-    </div>
+                                <div className="rating-overview">
+                                    <div className="rating-score">
+                                        {productDetail?.totalRating > 0
+                                        ? productDetail.ratingAverage.toFixed(1)
+                                        : "–"}
+                                    </div>
 
-    <div>
-      <div className="stars-container">
-        {renderStars(productDetail?.ratingAverage, productDetail?.totalRating)}
-      </div>
+                                <div>
+                                <div className="stars-container">
+                                    {renderStars(productDetail?.ratingAverage, productDetail?.totalRating)}
+                                </div>
 
-      <div className="rating-count">
-        {productDetail?.totalRating > 0
-          ? `Dựa trên ${productDetail.totalRating} đánh giá`
-          : "Chưa có đánh giá"}
-      </div>
-    </div>
-  </div>
+                                <div className="rating-count">
+                                    {productDetail?.totalRating > 0
+                                    ? `Dựa trên ${productDetail.totalRating} đánh giá`
+                                    : "Chưa có đánh giá"}
+                                </div>
+                            </div>
+                </div>
 
-  <Button type="primary" onClick={() => setIsModalOpen(true)}>
+  {/* <Button type="primary" onClick={() => setIsModalOpen(true)}>
     Viết đánh giá
-  </Button>
-</div>
+  </Button> */}
+            </div>
 
                             <div className="reviews-list">
                                 <div className="reviews-list">
@@ -764,7 +854,7 @@ useEffect(() => {
                                             </React.Fragment>
                                         ))
                                     ) : (
-                                        <p>Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!</p>
+                                        <p>Chưa có đánh giá nào. Bạn hãy mua hàng và là người đầu tiên đánh giá nhé!</p>
                                     )}
                                 </div>
                                 {pagination.totalPages > 1 && (

@@ -239,7 +239,7 @@ const ChatBox = ({ showChatBox, toggleChatBox }) => {
               >
                 <div
                   style={{
-                    maxWidth: "70%",
+                    maxWidth: "90%",
                     padding: "10px",
                     borderRadius: "10px",
                     backgroundColor:
@@ -250,7 +250,7 @@ const ChatBox = ({ showChatBox, toggleChatBox }) => {
                     <img
                       src={msg.mediaUrl}
                       alt="img"
-                      style={{ maxWidth: "250px", borderRadius: 8 }}
+                      style={{ maxWidth: "300px", borderRadius: 8 }}
                     />
                   ) : msg.messageType === "VIDEO" && msg.mediaUrl ? (
                     <video

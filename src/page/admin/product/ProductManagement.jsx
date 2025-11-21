@@ -47,6 +47,8 @@ const ProductManagement = () => {
 
   useEffect(() => {
     fetchProducts();
+    // console.log("🔥 PRODUCTS DATA:", response.content);
+
   }, [currentPage, pageSize, searchText, categoryFilter, brandFilter, sortField, sortDirection]);
 
   const fetchProducts = async () => {
@@ -137,11 +139,25 @@ const ProductManagement = () => {
   };
 
 
+  // const showViewModal = (product) => {
+  //   setCurrentProduct(product);
+  //   setPreviewImages(product.images || []);
+  //   setIsViewModalVisible(true);
+  // };
   const showViewModal = (product) => {
-    setCurrentProduct(product);
-    setPreviewImages(product.images || []);
-    setIsViewModalVisible(true);
-  };
+  setCurrentProduct(product);
+
+  // 🔥 Lấy ảnh từ optionImages
+  let optionImages = [];
+
+  if (product.options && product.options.length > 0) {
+    optionImages = product.options[0].optionImages || [];
+  }
+
+  setPreviewImages(optionImages);
+  setIsViewModalVisible(true);
+};
+
 
   const handleViewCancel = () => {
     setIsViewModalVisible(false);
@@ -211,38 +227,75 @@ const ProductManagement = () => {
       align: 'center',
       render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
     },
+    // {
+    //   title: 'Ảnh',
+    //   dataIndex: 'images',
+    //   key: 'image',
+    //   width: 100,
+    //   render: (images) => (
+    //     images && images.length > 0 ? (
+    //       <Image 
+    //         src={images[0].url} 
+    //         alt="Product"
+    //         width={70}
+    //         height={70}
+    //         style={{ objectFit: 'contain' }}
+    //         preview={false}
+    //         onClick={(e) => {
+    //           e.stopPropagation();
+    //         }}
+    //       />
+    //     ) : (
+    //       <div style={{ 
+    //         width: 70, 
+    //         height: 70, 
+    //         background: '#f0f0f0', 
+    //         display: 'flex', 
+    //         alignItems: 'center', 
+    //         justifyContent: 'center' 
+    //       }}>
+    //         <PictureOutlined style={{ fontSize: 24, color: '#999' }} />
+    //       </div>
+    //     )
+    //   ),
+    // },
     {
-      title: 'Ảnh',
-      dataIndex: 'images',
-      key: 'image',
-      width: 100,
-      render: (images) => (
-        images && images.length > 0 ? (
-          <Image 
-            src={images[0].url} 
-            alt="Product"
-            width={70}
-            height={70}
-            style={{ objectFit: 'contain' }}
-            preview={false}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          />
-        ) : (
-          <div style={{ 
-            width: 70, 
-            height: 70, 
-            background: '#f0f0f0', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center' 
-          }}>
-            <PictureOutlined style={{ fontSize: 24, color: '#999' }} />
-          </div>
-        )
-      ),
-    },
+  title: "Ảnh",
+  key: "image",
+  width: 100,
+  render: (_, record) => {
+    const images = record.images || [];
+
+    return images.length > 0 ? (
+      <Image
+        src={images[0].url}
+        alt="Product"
+        width={70}
+        height={70}
+        preview={false}
+        style={{ objectFit: "cover", borderRadius: 4 }}
+      />
+    ) : (
+      <div
+        style={{
+          width: 70,
+          height: 70,
+          background: "#f0f0f0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: 4
+        }}
+      >
+        <PictureOutlined style={{ fontSize: 24, color: "#999" }} />
+      </div>
+    );
+  }
+},
+
+
+
+
     {
       title: 'Tên sản phẩm',
       dataIndex: 'name',

@@ -225,7 +225,7 @@ const DashboardPage = () => {
                     valueStyle={{ color: '#3f8600' }}
                     formatter={value => `${value.toLocaleString('vi-VN')} VND`}
                 />
-                <div style={{ marginTop: '10px' }}>
+                {/* <div style={{ marginTop: '10px' }}>
                   {revenueGrowth > 0 ? (
                       <span style={{ color: '#3f8600' }}>
                     <ArrowUpOutlined /> {Math.abs(revenueGrowth).toFixed(1)}%
@@ -238,7 +238,7 @@ const DashboardPage = () => {
                   <span style={{ marginLeft: '8px', color: 'rgba(0, 0, 0, 0.45)' }}>
                   so với đầu năm
                 </span>
-                </div>
+                </div> */}
               </Card>
             </Col>
             <Col span={8}>
@@ -249,7 +249,7 @@ const DashboardPage = () => {
                     precision={0}
                     prefix={<UserOutlined />}
                 />
-                <div style={{ marginTop: '10px' }}>
+                {/* <div style={{ marginTop: '10px' }}>
                   {customerGrowth > 0 ? (
                       <span style={{ color: '#3f8600' }}>
                     <ArrowUpOutlined /> {Math.abs(customerGrowth).toFixed(1)}%
@@ -262,7 +262,7 @@ const DashboardPage = () => {
                   <span style={{ marginLeft: '8px', color: 'rgba(0, 0, 0, 0.45)' }}>
                   so với đầu năm
                 </span>
-                </div>
+                </div> */}
               </Card>
             </Col>
             <Col span={8}>
@@ -273,7 +273,7 @@ const DashboardPage = () => {
                     precision={0}
                     prefix={<LaptopOutlined />}
                 />
-                <div style={{ marginTop: '10px' }}>
+                {/* <div style={{ marginTop: '10px' }}>
                   {laptopGrowth > 0 ? (
                       <span style={{ color: '#3f8600' }}>
                     <ArrowUpOutlined /> {Math.abs(laptopGrowth).toFixed(1)}%
@@ -286,7 +286,7 @@ const DashboardPage = () => {
                   <span style={{ marginLeft: '8px', color: 'rgba(0, 0, 0, 0.45)' }}>
                   so với đầu năm
                 </span>
-                </div>
+                </div> */}
               </Card>
             </Col>
           </Row>

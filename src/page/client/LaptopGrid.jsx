@@ -255,12 +255,13 @@ const LaptopGrid = () => {
                                             <span>0đ</span>
                                             <span>25tr</span>
                                             <span>50tr</span>
+                                            <span>100tr</span>
                                         </div>
                                         <div className="price-slider">
                                             <input
                                                 type="range"
                                                 min="0"
-                                                max="50000000"
+                                                max="100000000"
                                                 value={priceRange[0]}
                                                 onChange={(e) => handlePriceChange(e, 0)}
                                                 className="range-min"
@@ -268,7 +269,7 @@ const LaptopGrid = () => {
                                             <input
                                                 type="range"
                                                 min="0"
-                                                max="50000000"
+                                                max="100000000"
                                                 value={priceRange[1]}
                                                 onChange={(e) => handlePriceChange(e, 1)}
                                                 className="range-max"

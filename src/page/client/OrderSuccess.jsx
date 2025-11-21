@@ -137,6 +137,8 @@ const OrderSuccess = () => {
     }
 
     if (paymentStatus === 'failed') {
+        
+
         return (
             <div className="order-success-container">
                 <Result
@@ -157,6 +159,8 @@ const OrderSuccess = () => {
     }
 
     if (paymentStatus === 'error') {
+        const userData = JSON.parse(localStorage.getItem("USER_LOGIN"));
+const userId = userData?.id;
         return (
             <div className="order-success-container">
                 <Result
@@ -167,7 +171,7 @@ const OrderSuccess = () => {
                         <Button type="primary" key="home" onClick={() => navigate('/')}>
                             Về trang chủ
                         </Button>,
-                        <Button key="order" onClick={() => navigate('/orders')}>
+                        <Button key="order" onClick={() => navigate(`/history/${userId}`)}>
                             Kiểm tra đơn hàng
                         </Button>,
                     ]}

@@ -163,7 +163,7 @@ const RegisterModal = ({ isOpen, onClose }) => {
             />
             <input
               name="fullName"
-              placeholder="Họ và tên"
+              placeholder="Tên hiển thị"
               value={form.fullName}
               onChange={handleChange}
               disabled={isLoading}

@@ -798,10 +798,10 @@ const OrderManagement = () => {
                 <Option value="CONFIRMED">Đã xác nhận</Option>
                 <Option value="PENDING">Đang xử lý</Option>
                 <Option value="SHIPPED">Đang giao hàng</Option>
-                <Option value="PENDING_RETURNED">Chờ xác nhận trả hàng</Option>
+                {/* <Option value="PENDING_RETURNED">Chờ xác nhận trả hàng</Option>
                 <Option value="CONFIRMED_RETURNED">Chờ hoàn hàng</Option>
                 <Option value="SHIPPED_RETURNED">Đã nhận hàng hoàn</Option>
-                <Option value="RETURNED">Trả hàng thành công</Option>
+                <Option value="RETURNED">Trả hàng thành công</Option> */}
               </Select>
             </Form.Item>
           </Form>

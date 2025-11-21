@@ -22,9 +22,9 @@ const AdminHeader = ({ onToggleSidebar, isSidebarOpen }) => {
       
       <div className="header-right">
         <div className="user-profile">
-          <div className="user-avatar">
+          {/* <div className="user-avatar">
             <img src={"https://i.pravatar.cc/150?img=3" } alt={userData.name} />
-          </div>
+          </div> */}
           <span className="user-name">{userData.fullName}</span>
         </div>
       </div>

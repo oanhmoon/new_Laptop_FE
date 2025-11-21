@@ -14,7 +14,7 @@ import {
     HistoryIcon,
 } from 'lucide-react';
 import './Header.css';
-import logo from '../../assets/log.jpg';
+import logo from '../../assets/logo.jpg';
 import LoginModal from "../../page/account/LoginModal";
 import RegisterModal from "../../page/account/RegisterModal";
 import ChangePasswordModal from "../../page/account/ChangePasswordModal";
