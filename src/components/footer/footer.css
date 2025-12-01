@@ -1,8 +1,8 @@
 /* Footer Styles */
 .site-footer {
     border-top: 1px solid #e2e8f0;
-    background-color: #f8fafc;
-    color: #334155;
+    background-color: #05111c;
+    color: #f0f1f3;
 }
 
 .footer-container {
@@ -62,7 +62,7 @@
 
 .company-description {
     font-size: 0.875rem;
-    color: #64748b;
+    color: #e7ebf0;
     line-height: 1.5;
 }
 
@@ -74,7 +74,7 @@
 .social-button {
     border-radius: 9999px;
     border-color: #cbd5e1;
-    color: #64748b;
+    color: #334155;
     width: 2.5rem;
     height: 2.5rem;
 }
@@ -102,7 +102,7 @@
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #334155;
+    color: #f3f5f8;
 }
 
 .footer-links {
@@ -113,7 +113,7 @@
 
 .footer-link {
     font-size: 0.875rem;
-    color: #64748b;
+    color: #eef0f2;
     transition: color 0.2s;
 }
 
@@ -133,7 +133,7 @@
     align-items: flex-start;
     gap: 0.5rem;
     font-size: 0.875rem;
-    color: #64748b;
+    color: #f3f4f6;
     line-height: 1.5;
 }
 
@@ -163,7 +163,7 @@
 
 .copyright {
     font-size: 0.875rem;
-    color: #64748b;
+    color: #edeff3;
     text-align: center;
 }
 

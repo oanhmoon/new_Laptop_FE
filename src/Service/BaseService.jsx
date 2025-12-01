@@ -17,6 +17,25 @@ export class baseService {
         }
         return Axios(config).then(response => response.data).catch(error => { throw error });
     }
+    putFormData = (url, formData) => {
+    const token = localStorage.getItem(TOKEN);
+
+    const config = {
+        url: `${DOMAIN}/${url}`,
+        method: 'PUT',
+        data: formData,
+        headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+    };
+
+    return Axios(config)
+        .then(response => response.data)
+        .catch(error => { throw error });
+};
+
+
+
 
     post = (url, model) => {
         const token = localStorage.getItem(TOKEN);
@@ -74,4 +93,18 @@ export class baseService {
         }
         return Axios(config).then(response => response.data).catch(error => { throw error });
     }
+    postFormData = (url, formData) => {
+    const token = localStorage.getItem(TOKEN);
+
+    return Axios({
+        url: `${DOMAIN}/${url}`,
+        method: "POST",
+        data: formData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+    }).then(res => res.data);
+};
+
 }

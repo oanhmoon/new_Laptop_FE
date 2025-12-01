@@ -556,3 +556,128 @@
     }
 
 }
+
+/* ----------- BUTTONS ----------- */
+
+/* Viết đánh giá */
+.review-btn {
+  background: #fff;
+  border: 1px solid #4096ff;
+  color: #4096ff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.review-btn:hover {
+  background: #4096ff;
+  color: #fff;
+}
+
+/* Trả hàng / Hoàn tiền */
+.secondary-button {
+  background: #fff6e5;
+  color: #d48806;
+  border: 1px solid #ffd666;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.secondary-button:hover {
+  background: #ffd666;
+  color: #8c6d1f;
+}
+
+/* Hủy đơn hàng */
+.cancel-button {
+  background: #fff1f0;
+  color: #cf1322;
+  border: 1px solid #ffa39e;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.cancel-button:hover {
+  background: #ffa39e;
+  color: #820014;
+}
+
+/* Tiếp tục thanh toán */
+.pay-again-button {
+  background: #e6f4ff;
+  color: #1677ff;
+  border: 1px solid #91caff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-bottom: 8px;
+}
+
+.pay-again-button:hover {
+  background: #91caff;
+  color: #003a8c;
+}
+
+/* ----------- REFUND INFO ----------- */
+
+.refund-info {
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.refund-info h3 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+}
+
+.refund-info p {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Grid items (ảnh + video) */
+.refund-media-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Khung cho ảnh + video */
+.refund-media-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 260px;
+}
+
+/* Ảnh thu nhỏ */
+.refund-image {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+/* Video thu nhỏ */
+.refund-video {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}

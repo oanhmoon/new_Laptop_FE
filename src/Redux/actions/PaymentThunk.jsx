@@ -50,5 +50,17 @@ export const check = (body) => async (dispatch) => {
     }
 };
 
+export const retryPayment = (orderId) => async (dispatch) => {
+    try {
+        const res = await paymentService.retryPayment(orderId);
+        if (res.data) {
+            window.location.href = res.data;
+        }
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+
 
 

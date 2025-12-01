@@ -11,5 +11,9 @@ export class RatingService extends baseService {
     getReview = (id,page,size) => {
         return this.get(`api/v1/product-reviews/${id}?page=${page}&size=${size}`, false);
     }
+
+    uploadMedia = (formData) => {
+        return this.postFormData(`api/v1/product-reviews/upload-media`, formData);
+    };
 }
 export const ratingService = new RatingService ();

@@ -26,9 +26,15 @@ export class OrderItemService extends baseService {
 
         return this.get(`api/v1/order/history/${userId}?${queryParams.toString()}`, true);
     }
-    refund = (id) => {
-        return this.put(`api/v1/order/refund/${id}`,{});
-    }
+    // refund = (id) => {
+    //     return this.put(`api/v1/order/refund/${id}`,{});
+    // }
+    refund = (id, formData) => {
+  return this.putFormData(`api/v1/order/refund/${id}`, formData);
+}
+
+
+
     cancel = (id) => {
         return this.put(`api/v1/order/cancel/${id}`,{});
     }

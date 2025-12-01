@@ -657,3 +657,39 @@
     margin-top: 20px;
     gap: 8px;
 }
+
+/* Review images container */
+.review-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px; /* giảm khoảng cách */
+    max-height: 120px; /* giới hạn chiều cao */
+    overflow-y: auto; /* cuộn dọc nếu quá nhiều ảnh */
+}
+
+/* Review image */
+.review-images img {
+    width: 60px;   /* giảm từ 112px (w-28) */
+    height: 60px;  /* giảm từ 112px */
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+/* Review videos container */
+.review-videos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 120px; /* giới hạn chiều cao */
+    overflow-y: auto; /* cuộn nếu nhiều video */
+}
+
+/* Review video */
+.review-videos video {
+    width: 100px;  /* giảm từ 160px (w-40) */
+    height: 70px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}

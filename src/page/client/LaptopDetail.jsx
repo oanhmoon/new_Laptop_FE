@@ -52,7 +52,8 @@ const LaptopDetail = () => {
     const [loading, setLoading] = useState(true);
     const [varientId,setVariantId] = useState(0);
     const { id } = useParams();
-    const [optionId, setOptionId] = useState(id);
+    // const [optionId, setOptionId] = useState(id);
+    const [optionId, setOptionId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [isFavorite, setIsFavorite] = useState(false);
@@ -71,6 +72,9 @@ const LaptopDetail = () => {
     console.log("🎨 Danh sách variant:", response?.productVariants);
 
             setProductDetail(response);
+            if (response?.productOptions?.length > 0) {
+    setOptionId(response.productOptions[0].id);
+}
             const selectedOptionIndex = response?.productOptions.findIndex(option => option.id.toString() === id.toString());
 
             if (selectedOptionIndex !== -1) {
@@ -249,33 +253,101 @@ const LaptopDetail = () => {
         const savedUser = localStorage.getItem('USER_LOGIN');
         return savedUser ? JSON.parse(savedUser) : null;
     });
-    const ReviewItem = ({ name, avatar, date, rating, comment }) => {
-        return (
-            <div className="review-item">
-                <div className="review-header">
-                    <div className="reviewer-info">
-                        <Avatar
-                            size={48}
-                            src={avatar}
-                            icon={<UserOutlined />}
-                            alt={name}
-                        />
-                        <div>
-                            <div className="reviewer-name">{name}</div>
-                            <div className="review-date">{date}</div>
-                        </div>
-                    </div>
-                    <Rate
-                        disabled
-                        value={rating}
-                        className="review-rating"
-                        character={({ index }) => index < rating ? <StarFilled /> : <StarOutlined />}
+    // const ReviewItem = ({ name, avatar, date, rating, comment }) => {
+    //     return (
+    //         <div className="review-item">
+    //             <div className="review-header">
+    //                 <div className="reviewer-info">
+    //                     <Avatar
+    //                         size={48}
+    //                         src={avatar}
+    //                         icon={<UserOutlined />}
+    //                         alt={name}
+    //                     />
+    //                     <div>
+    //                         <div className="reviewer-name">{name}</div>
+    //                         <div className="review-date">{date}</div>
+    //                     </div>
+    //                 </div>
+    //                 <Rate
+    //                     disabled
+    //                     value={rating}
+    //                     className="review-rating"
+    //                     character={({ index }) => index < rating ? <StarFilled /> : <StarOutlined />}
+    //                 />
+    //             </div>
+    //             <p className="review-comment">{comment}</p>
+    //         </div>
+    //     );
+    // };
+
+    const ReviewItem = ({
+    name,
+    avatar,
+    date,
+    rating,
+    comment,
+    images = [],
+    videos = []
+}) => {
+    return (
+        <div className="review-item">
+            <div className="review-header">
+                <div className="reviewer-info">
+                    <Avatar
+                        size={48}
+                        src={avatar || "/placeholder.svg"}
+                        icon={<UserOutlined />}
+                        alt={name}
                     />
+                    <div>
+                        <div className="reviewer-name">{name}</div>
+                        <div className="review-date">{date}</div>
+                    </div>
                 </div>
-                <p className="review-comment">{comment}</p>
+                <Rate
+                    disabled
+                    defaultValue={rating}
+                    className="review-rating"
+                    character={({ index }) =>
+                        index < rating ? <StarFilled /> : <StarOutlined />
+                    }
+                />
             </div>
-        );
-    };
+
+            <p className="review-comment">{comment}</p>
+
+            {/* IMAGES */}
+            {images.length > 0 && (
+                <div className="review-images mt-3 flex flex-wrap gap-3">
+                    {images.map((url, idx) => (
+                        <img
+                            key={idx}
+                            src={url}
+                            alt={`review-img-${idx}`}
+                            className="w-28 h-28 object-cover rounded-md border"
+                        />
+                    ))}
+                </div>
+            )}
+
+            {/* VIDEOS */}
+            {videos.length > 0 && (
+                <div className="review-videos mt-3 flex flex-wrap gap-3">
+                    {videos.map((url, idx) => (
+                        <video
+                            key={idx}
+                            src={url}
+                            controls
+                            className="w-40 rounded-md border"
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 //     useEffect(() => {
 //     const fetchFavoriteStatus = async () => {
@@ -298,23 +370,42 @@ const LaptopDetail = () => {
 //   fetchFavoriteStatus();
 // }, [dispatch, userData?.id, productDetail?.id, optionId]);
 
-useEffect(() => {
-  const fetchData = async () => {
-    const response = await fetchProductDetail(id);
+// useEffect(() => {
+//   const fetchData = async () => {
+//     const response = await fetchProductDetail(id);
 
-    // ✅ Nếu có user đăng nhập thì ghi lại lịch sử xem
-    if (userData?.id && response?.product?.id) {
-      try {
-        const res = await userViewHistoryService.recordView(userData.id, response.product.id);
-        console.log("📌 Lưu lịch sử xem thành công:", res);
-      } catch (error) {
-        console.error("❌ Ghi lịch sử xem thất bại:", error);
-      }
+//     // ✅ Nếu có user đăng nhập thì ghi lại lịch sử xem
+//     if (userData?.id && optionId) {
+//       try {
+//         const res = await userViewHistoryService.recordView(userData.id, optionId);
+//         console.log("📌 Lưu lịch sử xem thành công:", res);
+//       } catch (error) {
+//         console.error("❌ Ghi lịch sử xem thất bại:", error);
+//       }
+//     }
+//   };
+
+//   fetchData();
+// }, [dispatch, id, userData?.id]);
+useEffect(() => {
+  fetchProductDetail(id);
+}, [id]);
+
+useEffect(() => {
+  if (!userData?.id || !optionId) return;
+
+  const saveHistory = async () => {
+    try {
+      const res = await userViewHistoryService.recordView(userData.id, optionId);
+      console.log("📌 Lưu lịch sử xem thành công:", res);
+    } catch (err) {
+      console.error("❌ Lưu lịch sử xem thất bại:", err);
     }
   };
 
-  fetchData();
-}, [dispatch, id, userData?.id]);
+  saveHistory();
+}, [userData?.id, optionId]);
+
 
 useEffect(() => {
   if (!userData?.id || !optionId) return;
@@ -849,6 +940,8 @@ useEffect(() => {
                                                     rating={review.rating}
                                                     comment={review.comment}
                                                     date={formatDate(review.createdAt)}
+                                                    images={review.images}      // ⭐ THÊM
+    videos={review.videos}
                                                 />
                                                 {index < reviews.length - 1 && <Divider/>}
                                             </React.Fragment>

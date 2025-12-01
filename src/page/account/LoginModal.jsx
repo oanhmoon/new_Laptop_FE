@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../Redux/actions/UserThunk";
-import { User, Lock, Loader2, X } from "lucide-react";
+import { User, Loader2, X, Eye, EyeOff } from "lucide-react";
+
 import "./Login.css";
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onSwitchToForgotPassword }) => {
@@ -10,6 +11,8 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onSwitchToForgotPassw
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [inputErrors, setInputErrors] = useState({ username: false, password: false });
+  const [showPassword, setShowPassword] = useState(false);
+
 
   useEffect(() => {
     if (!isOpen) {
@@ -98,21 +101,40 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onSwitchToForgotPassw
           </div>
 
           <div className={`form-group ${inputErrors.password ? "error" : ""}`}>
-            <label htmlFor="password">Mật khẩu</label>
-            <div className="input-wrapper">
-              <input
-                type="password"
-                id="password"
-                placeholder="Nhập mật khẩu"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isLoading}
-                autoComplete="current-password"
-              />
-              <Lock size={16} className="input-icon" />
-            </div>
-            {inputErrors.password && <span className="error-message">Vui lòng nhập mật khẩu</span>}
-          </div>
+  <label htmlFor="password">Mật khẩu</label>
+
+  <div className="input-wrapper">
+    <input
+      type={showPassword ? "text" : "password"}
+      id="password"
+      placeholder="Nhập mật khẩu"
+      value={formData.password}
+      onChange={handleChange}
+      disabled={isLoading}
+      autoComplete="current-password"
+    />
+
+    {/* Icon toggle ẩn/hiện mật khẩu - CHỈ CÒN ICON NÀY */}
+    <button
+      type="button"
+      className="toggle-password-btn"
+      onClick={() => setShowPassword((prev) => !prev)}
+      disabled={isLoading}
+    >
+      {showPassword ? (
+        <EyeOff size={18} className="eye-icon" />
+      ) : (
+        <Eye size={18} className="eye-icon" />
+      )}
+    </button>
+  </div>
+
+  {inputErrors.password && (
+    <span className="error-message">Vui lòng nhập mật khẩu</span>
+  )}
+</div>
+
+
 
           <button type="submit" className="submit-button" disabled={isLoading}>
             {isLoading ? (

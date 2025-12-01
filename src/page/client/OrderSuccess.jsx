@@ -50,7 +50,8 @@ const OrderSuccess = () => {
                     // Prepare request body for backend verification
                     const requestBody = {
                         amount: parseInt(vnpParams.amount) / 100,
-                        orderId: vnpParams.orderInfo,
+                        // orderId: vnpParams.orderInfo,
+                        orderId: Number(vnpParams.orderInfo.replace(/[^0-9]/g, "")),
                         userId: JSON.parse(localStorage.getItem('USER_LOGIN'))?.id,
                         type: vnpParams.responseCode === "00" ? 0 : 1
                     };

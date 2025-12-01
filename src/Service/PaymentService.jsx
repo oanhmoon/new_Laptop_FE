@@ -12,6 +12,11 @@ export class PaymentService extends baseService {
     paycheck = (body) => {
        return this.post('api/v1/payments/check', body);
     }
+    retryPayment = (orderId) => {
+    return this.post(`api/v1/payments/retry/${orderId}`);
+}
+
+
 
 }
 export const paymentService = new PaymentService ();

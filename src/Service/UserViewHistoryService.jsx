@@ -6,10 +6,14 @@ export class UserViewHistoryService extends baseService {
     }
 
     // ✅ Ghi lại lịch sử xem sản phẩm
-    recordView = (userId, productId) => {
-        // Gửi request POST /api/v1/products/{productId}/view?userId={userId}
-        return this.post(`api/v1/products/${productId}/view?userId=${userId}`, null);
-    };
+    // recordView = (userId, productId) => {
+    //     // Gửi request POST /api/v1/products/{productId}/view?userId={userId}
+    //     return this.post(`api/v1/products/${productId}/view?userId=${userId}`, null);
+    // };
+    recordView = (userId, optionId) => {
+    return this.post(`api/v1/products/${optionId}/view?userId=${userId}`, null);
+};
+
 
     // ✅ (Tuỳ chọn) Lấy lịch sử xem của người dùng
     getUserHistory = (userId, page = 1, size = 10) => {

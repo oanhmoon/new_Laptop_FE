@@ -87,6 +87,12 @@ const Header = () => {
         navigate('/');
     };
 
+    const formatMoney = (value) => {
+    if (!value) return "0";
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+
     // Load cart items count
     useEffect(() => {
         if (!userData?.id) return;
@@ -123,15 +129,15 @@ const Header = () => {
             <Menu.Item key="balance" style={{ cursor: 'default', backgroundColor: '#fafafa', color: '#1890ff', fontWeight: 500 }} disabled>
                 <Space>
                     <MoneyCollectOutlined />
-                    Số dư: {balance || 0} đ
+                    Số dư: {formatMoney(balance)} đ
                 </Space>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="orders" icon={<History />} onClick={() => navigate(`/history/${userData.id}`)}>
                 Lịch sử mua hàng
             </Menu.Item>
-            <Menu.Item key="wallet" icon={<MoneyCollectOutlined />} onClick={() => navigate(`/wallet/${userData.id}`)}>
-                Rút tiền từ ví TechWallets
+            <Menu.Item key="wallet" icon={<MoneyCollectOutlined style={{ fontSize: 20 }} />} onClick={() => navigate(`/wallet/${userData.id}`)}>
+                Rút tiền từ ví
             </Menu.Item>
             <Menu.Item key="wallet-history" icon={<HistoryIcon />} onClick={() => navigate(`/wallet-history/${userData.id}`)}>
                 Lịch sử rút tiền
@@ -238,6 +244,8 @@ const Header = () => {
                                 <ShoppingCart className="icon" />
                             </Badge>
                         </Button>
+
+                        {userData?.role === "ADMIN" && ( <Button type="text" className="header-icon" onClick={() => navigate("/admin/dashboard")} > <Key className="icon" /> </Button> )}
                     </div>
                 </div>
             </header>
