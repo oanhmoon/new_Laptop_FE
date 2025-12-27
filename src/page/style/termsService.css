@@ -1,0 +1,32 @@
+.terms-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 16px;
+    line-height: 1.7;
+    color: #333;
+}
+
+.terms-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+.terms-section {
+    margin-bottom: 24px;
+}
+
+.terms-section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.terms-section ul {
+    padding-left: 20px;
+}
+
+.terms-section li {
+    margin-bottom: 8px;
+}

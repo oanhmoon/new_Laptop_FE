@@ -151,20 +151,20 @@
     border-color: #e11d48;
 }
 
-.image-container-home-screen {
+/* .image-container-home-screen {
     position: relative;
     aspect-ratio: 3/2;
     background: #f9fafb;
     padding: 1rem;
-}
+} */
 
-.product-image-home-screen {
+/* .product-image-home-screen {
     width: 100%;
     height: 100%;
     object-fit: contain;
     mix-blend-mode: multiply;
     transition: transform 0.3s ease;
-}
+} */
 
 .product-card-home-screen:hover .product-image-home-screen {
     transform: scale(1.05);
@@ -183,9 +183,9 @@
     z-index: 2;
 }
 
-.product-content-home-screen {
+/* .product-content-home-screen {
     padding: 1.25rem;
-}
+} */
 
 .product-name-home-screen {
     font-size: 0.95rem;
@@ -352,4 +352,78 @@
     font-size: 1.1rem;
     color: #e11d48;
     font-weight: 500;
+}
+
+/* Scroll ngang cho section sản phẩm gợi ý */
+.products-scroll-home-screen {
+    display: flex;
+    gap: 1.5rem;               /* giống khoảng cách card cũ */
+    overflow-x: auto;
+    padding: 0.5rem 0 1rem 0;  /* tránh scroll-bar dính sát card */
+    scroll-behavior: smooth;
+    scrollbar-width: thin;     /* Firefox */
+    scrollbar-color: #ccc #f1f1f1;
+}
+
+/* Scrollbar cho Chrome/Safari */
+.products-scroll-home-screen::-webkit-scrollbar {
+    height: 8px;
+}
+
+.products-scroll-home-screen::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.products-scroll-home-screen::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Card giữ nguyên kích thước như grid */
+.products-scroll-home-screen .product-card-home-screen {
+    flex: 0 0 calc(25% - 1.5rem); /* KHÓA SIZE */
+    max-width: calc(25% - 1.5rem);
+}
+
+
+
+.image-container-home-screen {
+    position: relative;
+    height: 200px;               /* FIX CHIỀU CAO */
+    background: #f9fafb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    overflow: hidden;
+}
+
+.product-image-home-screen {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;        /* ảnh luôn giữa và không méo */
+    mix-blend-mode: multiply;
+    transition: transform 0.3s ease;
+}
+
+.product-card-home-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-content-home-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+}
+
+.product-name-home-screen {
+    min-height: 4rem;           /* giữ đúng 2 dòng */
+    line-height: 1.4;
+}
+
+.rating-container-home-screen {
+    margin-top: auto;           /* footer luôn ở cuối */
 }

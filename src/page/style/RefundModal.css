@@ -1,0 +1,151 @@
+/* Hiệu ứng mờ nền */
+.refund-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Khối modal */
+.refund-modal {
+  width: 420px;
+  background: #fff;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Tiêu đề */
+.refund-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Error text */
+.refund-error {
+  color: #e63946;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+/* Input & Textarea styling */
+.refund-modal textarea,
+.refund-modal input[type="file"] {
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+}
+
+.refund-modal textarea {
+  padding: 10px;
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  resize: none;
+  transition: border 0.2s;
+}
+
+.refund-modal textarea:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* Label */
+.refund-label {
+  font-weight: 500;
+  margin-top: 6px;
+  display: block;
+}
+
+/* Buttons */
+.refund-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.refund-btn {
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.refund-btn.cancel {
+  border: 1px solid #c2c2c2;
+  background: #f8f8f8;
+}
+
+.refund-btn.cancel:hover {
+  background: #e9e9e9;
+}
+
+.refund-btn.submit {
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+
+.refund-btn.submit:hover {
+  background: #1d4ed8;
+}
+
+.preview-item {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.preview-img,
+.preview-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-media-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

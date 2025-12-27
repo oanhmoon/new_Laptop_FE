@@ -17,9 +17,9 @@
 
 .chat-box {
     position: fixed;
-    bottom: 80px;
+    bottom: 160px;
     right: 20px;
-    width: 300px;
+    width: 350px;
     height: 400px;
     background: white;
     border-radius: 10px;

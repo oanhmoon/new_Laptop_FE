@@ -12,7 +12,7 @@ const DialogflowMessenger = () => {
     return (
         <df-messenger
             intent="WELCOME"
-            chat-title="TrungNguyenBOT"
+            chat-title="OHTSTOREBOT"
             agent-id="490e6455-c0f0-4bcb-bcab-76b7bdc40b4d"
             language-code="vi"
         ></df-messenger>

@@ -775,7 +775,8 @@ const OptionsStep = ({
   }, [initialValues, deletedOptionIds, form]);
 
   const addOption = () => {
-    const newOptions = [...options, {}];
+    // const newOptions = [...options, {}];
+    const newOptions = [...options, { images: [] }];
     setOptions(newOptions);
     setActiveTab((newOptions.length - 1).toString());
     
@@ -902,11 +903,19 @@ const OptionsStep = ({
       if (!validateOptionCodes(values)) return;
 
       // ensure each option has at least one image (existing or new)
-      const optionHasImages = values.options.every((opt, idx) => {
-        const imgState = imageState[idx];
-        return (imgState?.existingImages?.length > 0 || imgState?.newImages?.length > 0) || 
-               (opt.images && opt.images.length > 0);
-      });
+      // const optionHasImages = values.options.every((opt, idx) => {
+      //   const imgState = imageState[idx];
+      //   return (imgState?.existingImages?.length > 0 || imgState?.newImages?.length > 0) || 
+      //          (opt.images && opt.images.length > 0);
+      // });
+      const optionHasImages = values.options.every((_, idx) => {
+  const imgState = imageState[idx];
+  return (
+    (imgState?.existingImages?.length ?? 0) > 0 ||
+    (imgState?.newImages?.length ?? 0) > 0
+  );
+});
+
       
       if (!optionHasImages) {
         const idx = values.options.findIndex((opt, index) => {
@@ -1050,7 +1059,7 @@ const OptionsStep = ({
 
                 {/* ===== Upload gallery for this option ===== */}
                 {/* Existing images display */}
-                {imageState[index]?.existingImages?.length > 0 && (
+                {/* {imageState[index]?.existingImages?.length > 0 && (
                   <Row gutter={16} style={{ marginBottom: 12 }}>
                     {imageState[index].existingImages.map((img) => (
                       <Col key={img.id} span={6} style={{ position: 'relative' }}>
@@ -1071,7 +1080,7 @@ const OptionsStep = ({
                       </Col>
                     ))}
                   </Row>
-                )}
+                )} */}
 
                 <Form.Item
                   name={['options', index, 'images']}
@@ -1090,18 +1099,19 @@ const OptionsStep = ({
                     }));
                     return fileList;
                   }}
+                  
                   rules={[
                     {
-                      validator: (_, value) => {
-                        const hasExisting = imageState[index]?.existingImages?.length > 0;
-                        const hasNew = value && value.length > 0;
-                        if (hasExisting || hasNew) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('Vui lòng tải lên ít nhất 1 ảnh cho phiên bản này!'));
+                      validator: () => {
+                        const hasExisting = (imageState[index]?.existingImages?.length ?? 0) > 0;
+                        const hasNew = (imageState[index]?.newImages?.length ?? 0) > 0;
+                        return hasExisting || hasNew
+                          ? Promise.resolve()
+                          : Promise.reject(new Error('Vui lòng tải lên ít nhất 1 ảnh'));
                       }
                     }
                   ]}
+
                 >
                   <Upload
                     listType="picture-card"
@@ -1769,457 +1779,7 @@ const removeVariant = (optionIndex, variantIndex) => {
   );
 };
 
-// Step 4: Review and Submit
-// const ReviewStep = ({ formData, onSubmit, onBack }) => {
-//   const [loading, setLoading] = useState(false);
-//   const dispatch = useDispatch();
-//   const notification = useContext(NotificationContext);
-//   const navigate = useNavigate();
 
-//   // const handleSubmit = async () => {
-//   //   setLoading(true);
-//   //   try {
-//   //     // Create FormData object for multipart/form-data
-//   //     const formDataObj = new FormData();
-      
-//   //     // Thêm ID sản phẩm
-//   //     formDataObj.append("id", formData.productId);
-      
-//   //     // Add basic product info
-//   //     formDataObj.append("name", formData.basicInfo.name);
-//   //     formDataObj.append("description", formData.basicInfo.description || '');
-//   //     formDataObj.append("categoryId", formData.basicInfo.categoryId);
-//   //     formDataObj.append("brandId", formData.basicInfo.brandId);
-      
-//   //     // Add image delete IDs if any
-//   //     if (Array.isArray(formData.imageDeleteIds) && formData.imageDeleteIds.length > 0) {
-//   //       formData.imageDeleteIds.forEach(id => {
-//   //         formDataObj.append("imageDeleteIds", id);
-//   //       });
-//   //     }
-      
-//   //     // Add deleted option IDs if any
-//   //     if (Array.isArray(formData.deletedOptionIds) && formData.deletedOptionIds.length > 0) {
-//   //       formData.deletedOptionIds.forEach(id => {
-//   //         formDataObj.append("deletedOptionIds", id);
-//   //       });
-//   //     }
-      
-//   //     // Add new product thumbnail images
-//   //     if (formData.basicInfo.newImages && formData.basicInfo.newImages.length > 0) {
-//   //       formData.basicInfo.newImages.forEach(image => {
-//   //         if (image.originFileObj) {
-//   //           formDataObj.append("imageThumbnails", image.originFileObj);
-//   //         }
-//   //       });
-//   //     }
-      
-//   //     // Prepare options and variants - lọc bỏ các options đã bị đánh dấu xóa
-//   //     const activeOptions = Array.isArray(formData.options) ? formData.options.filter(option => 
-//   //       !Array.isArray(formData.deletedOptionIds) || !formData.deletedOptionIds.includes(option.id)
-//   //     ) : [];
-      
-//   //     activeOptions.forEach((option, optionIndex) => {
-//   //       const optionKey = `options[${optionIndex}]`;
-        
-//   //       // Thêm ID nếu là option đã tồn tại
-//   //       if (option.id) {
-//   //         formDataObj.append(`${optionKey}.id`, option.id);
-//   //       }
-        
-//   //       // Thêm thông tin cơ bản của option
-//   //       formDataObj.append(`${optionKey}.code`, option.code);
-//   //       formDataObj.append(`${optionKey}.price`, option.price);
-        
-//   //       // Thêm các thuộc tính kỹ thuật của option
-//   //       formDataObj.append(`${optionKey}.cpu`, option.cpu || '');
-//   //       formDataObj.append(`${optionKey}.gpu`, option.gpu || '');
-//   //       formDataObj.append(`${optionKey}.ram`, option.ram || '');
-//   //       formDataObj.append(`${optionKey}.ramType`, option.ramType || '');
-//   //       formDataObj.append(`${optionKey}.ramSlot`, option.ramSlot || '');
-//   //       formDataObj.append(`${optionKey}.storage`, option.storage || '');
-//   //       formDataObj.append(`${optionKey}.storageUpgrade`, option.storageUpgrade || '');
-//   //       formDataObj.append(`${optionKey}.displaySize`, option.displaySize || '');
-//   //       formDataObj.append(`${optionKey}.displayResolution`, option.displayResolution || '');
-//   //       formDataObj.append(`${optionKey}.displayRefreshRate`, option.displayRefreshRate || '');
-//   //       formDataObj.append(`${optionKey}.displayTechnology`, option.displayTechnology || '');
-//   //       formDataObj.append(`${optionKey}.audioFeatures`, option.audioFeatures || '');
-//   //       formDataObj.append(`${optionKey}.keyboard`, option.keyboard || '');
-//   //       formDataObj.append(`${optionKey}.security`, option.security || '');
-//   //       formDataObj.append(`${optionKey}.webcam`, option.webcam || '');
-//   //       formDataObj.append(`${optionKey}.operatingSystem`, option.operatingSystem || option.os || '');
-//   //       formDataObj.append(`${optionKey}.battery`, option.battery || '');
-//   //       formDataObj.append(`${optionKey}.weight`, option.weight || '');
-//   //       formDataObj.append(`${optionKey}.dimension`, option.dimension || '');
-//   //       formDataObj.append(`${optionKey}.wifi`, option.wifi || '');
-//   //       formDataObj.append(`${optionKey}.bluetooth`, option.bluetooth || '');
-//   //       formDataObj.append(`${optionKey}.ports`, option.ports || '');
-//   //       formDataObj.append(`${optionKey}.specialFeatures`, option.specialFeatures || '');
-        
-//   //       // Thêm danh sách variant bị xóa nếu có
-//   //       const optionId = option.id;
-//   //       if (formData.deletedVariantIds && formData.deletedVariantIds[optionId] && formData.deletedVariantIds[optionId].length > 0) {
-//   //           console.log('Deleted variant IDs:', formData.deletedVariantIds[optionId]);
-//   //         formData.deletedVariantIds[optionId].forEach(variantId => {
-//   //           formDataObj.append(`${optionKey}.deletedVariantIds`, variantId);
-//   //         });
-//   //       }
-        
-//   //       // Thêm thông tin về variants
-//   //       const optionVariants = formData.variants[optionIndex] || [];
-//   //       optionVariants.forEach((variant, variantIndex) => {
-//   //         const variantKey = `${optionKey}.variants[${variantIndex}]`;
-          
-//   //         // Thêm ID nếu là variant đã tồn tại
-//   //         if (variant.id) {
-//   //           formDataObj.append(`${variantKey}.id`, variant.id);
-//   //         }
-          
-//   //         formDataObj.append(`${variantKey}.color`, variant.color);
-//   //         formDataObj.append(`${variantKey}.priceDiff`, variant.priceDiff || 0);
-//   //         formDataObj.append(`${variantKey}.stock`, parseInt(variant.stock) || 0);
-          
-//   //         // Thêm hình ảnh cho variant nếu có
-//   //         if (variant.image && variant.image[0] && variant.image[0].originFileObj) {
-//   //           formDataObj.append(`${variantKey}.image`, variant.image[0].originFileObj);
-//   //         }
-//   //       });
-//   //     });
-      
-//   //     // Gửi đến API thông qua Redux action
-//   //     const response = await dispatch(adminUpdateProduct( formData.productId, formDataObj));
-//   //     console.log('Response:', response);
-
-//   //     if (response === 200) {
-//   //       notification.success({
-//   //         message: 'Thành công',
-//   //         description: 'Cập nhật thành công',
-//   //         placement: 'topRight',
-//   //       });
-
-//   //       onSubmit();
-
-//   //       setTimeout(() => {
-//   //         navigate('/admin/laptops');
-//   //       }, 1000);
-//   //     } else {
-//   //       notification.error({
-//   //         message: 'Lỗi',
-//   //         description: 'Cập nhật sản phẩm thất bại!',
-//   //         placement: 'topRight',
-//   //       });
-//   //     }
-//   //   } catch (error) {
-//   //     console.error('Lỗi khi cập nhật sản phẩm:', error);
-//   //     notification.error({
-//   //       message: 'Lỗi',
-//   //       description: 'Cập nhật sản phẩm thất bại!',
-//   //       placement: 'topRight',
-//   //     });
-//   //   } finally {
-//   //     setLoading(false);
-//   //   }
-//   // };
-//   const handleSubmit = async () => {
-//     const fd = new FormData();
-
-//     // --- PRODUCT ---
-//     fd.append("id", formData.productId);
-//     fd.append("name", formData.basicInfo.name);
-//     fd.append("description", formData.basicInfo.description || "");
-//     fd.append("brandId", formData.basicInfo.brandId);
-//     fd.append("categoryId", formData.basicInfo.categoryId);
-
-//     // Deleted option
-//     if (formData.deletedOptionIds?.length > 0) {
-//         formData.deletedOptionIds.forEach(id => {
-//             fd.append("deletedOptionIds", id);
-//         });
-//     }
-
-//     // --- OPTIONS ---
-//     const activeOptions = formData.options.filter(opt => 
-//         !formData.deletedOptionIds.includes(opt.id)
-//     );
-
-//     activeOptions.forEach((opt, optIndex) => {
-//         const ok = `options[${optIndex}]`;
-
-//         // If old option → include id
-//         if (opt.id) fd.append(`${ok}.id`, opt.id);
-
-//         // Basic fields
-//         fd.append(`${ok}.code`, opt.code);
-//         fd.append(`${ok}.price`, opt.price);
-
-//         fd.append(`${ok}.cpu`, opt.cpu || "");
-//         fd.append(`${ok}.gpu`, opt.gpu || "");
-//         fd.append(`${ok}.ram`, opt.ram || "");
-//         fd.append(`${ok}.ramType`, opt.ramType || "");
-//         fd.append(`${ok}.ramSlot`, opt.ramSlot || "");
-//         fd.append(`${ok}.storage`, opt.storage || "");
-//         fd.append(`${ok}.storageUpgrade`, opt.storageUpgrade || "");
-//         fd.append(`${ok}.displaySize`, opt.displaySize || "");
-//         fd.append(`${ok}.displayResolution`, opt.displayResolution || "");
-//         fd.append(`${ok}.displayRefreshRate`, opt.displayRefreshRate || "");
-//         fd.append(`${ok}.displayTechnology`, opt.displayTechnology || "");
-//         fd.append(`${ok}.audioFeatures`, opt.audioFeatures || "");
-//         fd.append(`${ok}.keyboard`, opt.keyboard || "");
-//         fd.append(`${ok}.security`, opt.security || "");
-//         fd.append(`${ok}.webcam`, opt.webcam || "");
-//         fd.append(`${ok}.operatingSystem`, opt.operatingSystem || "");
-//         fd.append(`${ok}.battery`, opt.battery || "");
-//         fd.append(`${ok}.weight`, opt.weight || "");
-//         fd.append(`${ok}.dimension`, opt.dimension || "");
-//         fd.append(`${ok}.wifi`, opt.wifi || "");
-//         fd.append(`${ok}.bluetooth`, opt.bluetooth || "");
-//         fd.append(`${ok}.ports`, opt.ports || "");
-//         fd.append(`${ok}.specialFeatures`, opt.specialFeatures || "");
-
-//         // --- OPTION IMAGES ---
-//         // New uploads
-//         if (opt.newImages?.length > 0) {
-//             opt.newImages.forEach(img => {
-//                 fd.append(`${ok}.images`, img.originFileObj);
-//             });
-//         }
-
-//         // Deleted image ids
-//         if (opt.deletedImageIds?.length > 0) {
-//             opt.deletedImageIds.forEach(id => {
-//                 fd.append(`${ok}.deletedImageIds`, id);
-//             });
-//         }
-
-//         // --- VARIANTS ---
-//         const variants = formData.variants[optIndex] || [];
-
-//         variants.forEach((v, vIndex) => {
-//             const vk = `${ok}.variants[${vIndex}]`;
-
-//             if (v.id) fd.append(`${vk}.id`, v.id);
-
-//             fd.append(`${vk}.color`, v.color);
-//             fd.append(`${vk}.priceDiff`, v.priceDiff ?? 0);
-//             fd.append(`${vk}.stock`, v.stock ?? 0);
-
-//             // variant new image
-//             if (v.image?.[0]?.originFileObj)
-//                 fd.append(`${vk}.image`, v.image[0].originFileObj);
-//         });
-
-//         // Deleted variants
-//         if (formData.deletedVariantIds?.[opt.id]?.length > 0) {
-//             formData.deletedVariantIds[opt.id].forEach(vid => {
-//                 fd.append(`${ok}.deletedVariantIds`, vid);
-//             });
-//         }
-//     });
-
-//     // Send to API
-//     const res = await dispatch(adminUpdateProduct(formData.productId, fd));
-// };
-
-//   // Lọc các option đã bị đánh dấu xóa
-//   const activeOptions = Array.isArray(formData.options) ? formData.options.filter(option => 
-//     !Array.isArray(formData.deletedOptionIds) || !formData.deletedOptionIds.includes(option.id)
-//   ) : [];
-
-//   return (
-//     <div>
-//       <Card title="Xem lại thông tin sản phẩm" bordered={false}>
-//         <Descriptions title="Thông tin cơ bản" bordered column={2}>
-//           <Descriptions.Item label="ID sản phẩm">{formData.productId}</Descriptions.Item>
-//           <Descriptions.Item label="Tên sản phẩm">{formData.basicInfo.name}</Descriptions.Item>
-//           <Descriptions.Item label="Danh mục">
-//             {formData.basicInfo.categoryId}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Thương hiệu">
-//             {formData.basicInfo.brandId}
-//           </Descriptions.Item>
-          
-//           <Descriptions.Item label="Hình ảnh giữ lại">
-//             {formData.basicInfo.existingImageIds?.length || 0} ảnh
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Hình ảnh mới">
-//             {formData.basicInfo.newImages?.length || 0} ảnh
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Hình ảnh bị xóa" span={2}>
-//             {Array.isArray(formData.imageDeleteIds) ? formData.imageDeleteIds.length : 0} ảnh
-//           </Descriptions.Item>
-          
-//           <Descriptions.Item label="Mô tả" span={2}>
-//             {formData.basicInfo.description ? (
-//               <div dangerouslySetInnerHTML={{ __html: formData.basicInfo.description }} />
-//             ) : (
-//               'Không có mô tả'
-//             )}
-//           </Descriptions.Item>
-//         </Descriptions>
-
-//         <Divider />
-
-//         {Array.isArray(formData.deletedOptionIds) && formData.deletedOptionIds.length > 0 && (
-//           <Alert
-//             message={`${formData.deletedOptionIds.length} phiên bản sẽ bị xóa`}
-//             description="Các phiên bản đã bị đánh dấu xóa không hiển thị ở đây."
-//             type="warning"
-//             showIcon
-//             style={{ marginBottom: 16 }}
-//           />
-//         )}
-
-//         <Collapse defaultActiveKey={['0']}>
-//           {activeOptions.map((option, index) => {
-//             // Kiểm tra xem option này có variant bị xóa không
-//             const hasDeletedVariants = 
-//               formData.deletedVariantIds && 
-//               formData.deletedVariantIds[option.id] && 
-//               formData.deletedVariantIds[option.id].length > 0;
-              
-//             return (
-//               <Panel 
-//                 header={`Phiên bản ${index + 1}: ${option.code || 'Chưa đặt tên'}`} 
-//                 key={index}
-//                 extra={
-//                   <Space>
-//                     {option.id && <Tag color="blue">ID: {option.id}</Tag>}
-//                     <Tag color="green">{option.price ? `${option.price}đ` : 'Chưa có giá'}</Tag>
-//                   </Space>
-//                 }
-//               >
-//                 <Tabs defaultActiveKey="1">
-//                   <TabPane tab="Hiệu năng" key="1">
-//                     <Descriptions bordered column={2}>
-//                       <Descriptions.Item label="CPU">{option.cpu || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="GPU">{option.gpu || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="RAM">{option.ram || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Loại RAM">{option.ramType || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Khe RAM">{option.ramSlot || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Lưu trữ">{option.storage || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Nâng cấp lưu trữ">{option.storageUpgrade || 'N/A'}</Descriptions.Item>
-//                     </Descriptions>
-//                   </TabPane>
-
-//                   <TabPane tab="Màn hình" key="2">
-//                     <Descriptions bordered column={2}>
-//                       <Descriptions.Item label="Kích thước màn hình">{option.displaySize || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Độ phân giải">{option.displayResolution || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Tần số quét">{option.displayRefreshRate || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Công nghệ màn hình">{option.displayTechnology || 'N/A'}</Descriptions.Item>
-//                     </Descriptions>
-//                   </TabPane>
-
-//                   <TabPane tab="Âm thanh & Camera" key="3">
-//                     <Descriptions bordered column={2}>
-//                       <Descriptions.Item label="Tính năng âm thanh">{option.audioFeatures || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Webcam">{option.webcam || 'N/A'}</Descriptions.Item>
-//                     </Descriptions>
-//                   </TabPane>
-
-//                   <TabPane tab="Tính năng khác" key="4">
-//                     <Descriptions bordered column={2}>
-//                       <Descriptions.Item label="Bàn phím">{option.keyboard || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Bảo mật">{option.security || 'N/A'}</Descriptions.Item>
-//                                             <Descriptions.Item label="Hệ điều hành">{option.operatingSystem || option.os || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Pin">{option.battery || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Trọng lượng">{option.weight || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Kích thước">{option.dimension || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Wi-Fi">{option.wifi || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Bluetooth">{option.bluetooth || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Cổng kết nối">{option.ports || 'N/A'}</Descriptions.Item>
-//                       <Descriptions.Item label="Tính năng đặc biệt" span={2}>{option.specialFeatures || 'N/A'}</Descriptions.Item>
-//                     </Descriptions>
-//                   </TabPane>
-//                 </Tabs>
-
-//                 <Divider orientation="left">Màu sắc</Divider>
-                
-//                 {hasDeletedVariants && (
-//                   <Alert
-//                     message={`${formData.deletedVariantIds[option.id].length} màu sắc sẽ bị xóa`}
-//                     description="Các màu sắc đã bị đánh dấu xóa không hiển thị ở đây."
-//                     type="warning"
-//                     showIcon
-//                     style={{ marginBottom: 16 }}
-//                   />
-//                 )}
-                
-//                 <Row gutter={16}>
-//                   {formData.variants[index]?.map((variant, vIndex) => {
-//                     // Bỏ qua hiển thị các variant đã bị đánh dấu xóa
-//                     if (option.id && 
-//                         formData.deletedVariantIds && 
-//                         formData.deletedVariantIds[option.id] && 
-//                         formData.deletedVariantIds[option.id].includes(variant.id)) {
-//                       return null;
-//                     }
-                    
-//                     return (
-//                       <Col span={8} key={vIndex}>
-//                         <Card 
-//                           title={`Màu sắc ${vIndex + 1}: ${variant.color}`}
-//                           style={{ marginBottom: 16 }}
-//                           extra={variant.id && <Tag color="blue">ID: {variant.id}</Tag>}
-//                         >
-//                           <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-//                             {variant.image && variant.image[0] && (
-//                               <Avatar 
-//                                 src={variant.image[0].url || variant.image[0].thumbUrl || 
-//                                   (variant.image[0].originFileObj && URL.createObjectURL(variant.image[0].originFileObj))} 
-//                                 shape="square"
-//                                 size={64}
-//                                 style={{ marginRight: 16 }}
-//                               />
-//                             )}
-//                             {!variant.image && variant.imageUrl && (
-//                               <Avatar 
-//                                 src={variant.imageUrl} 
-//                                 shape="square"
-//                                 size={64}
-//                                 style={{ marginRight: 16 }}
-//                               />
-//                             )}
-//                             <div>
-//                               <div><strong>Màu sắc:</strong> {variant.color || 'N/A'}</div>
-//                               <div><strong>Số lượng:</strong> {variant.stock || '0'}</div>
-//                               {variant.priceDiff && variant.priceDiff !== '0' && (
-//                                 <div><strong>Chênh lệch giá:</strong> {variant.priceDiff}đ</div>
-//                               )}
-//                             </div>
-//                           </div>
-//                         </Card>
-//                       </Col>
-//                     );
-//                   })}
-//                 </Row>
-//               </Panel>
-//             );
-//           })}
-//         </Collapse>
-//       </Card>
-
-//       <div style={{ marginTop: 24, textAlign: 'right' }}>
-//         <Space>
-//           <Button onClick={onBack}>
-//             <ArrowLeftOutlined /> Quay lại
-//           </Button>
-//           <Button 
-//             type="primary" 
-//             onClick={handleSubmit}
-//             loading={loading}
-//             icon={<CheckOutlined />}
-//           >
-//             Cập nhật
-//           </Button>
-//         </Space>
-//       </div>
-//     </div>
-//   );
-// };
-
-// ======================= REVIEW STEP (NEW) =======================
 
 const ReviewStep = ({ formData, onSubmit, onBack }) => {
   const [loading, setLoading] = useState(false);
@@ -2227,9 +1787,6 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
   const notification = useContext(NotificationContext);
   const navigate = useNavigate();
 
-  // ==========================
-  // 🔥 BUILD FORMDATA
-  // ==========================
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -2251,9 +1808,6 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
         });
       }
 
-      // ───────────────────────────────
-      // 🔥 BUILD OPTIONS + VARIANTS + IMAGE GALLERY
-      // ───────────────────────────────
 
       const activeOptions = formData.options.filter(
         opt => !formData.deletedOptionIds.includes(opt.id)
@@ -2298,8 +1852,7 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
           });
         }
         
-        // Note: Backend handles existing images automatically (keeps all except deleted ones)
-        // We don't need to send existingImageIds as backend doesn't process them
+
 
         // VARIANTS
         const variants = formData.variants[optionIndex] || [];
@@ -2358,9 +1911,6 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
     }
   };
 
-  // ==========================
-  // REVIEW UI
-  // ==========================
 
   const activeOptions = formData.options.filter(
     opt => !formData.deletedOptionIds.includes(opt.id)
@@ -2513,271 +2063,6 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
 };
 
 
-// Main Wizard Component
-// const UpdateProductWizard = () => {
-//   const [currentStep, setCurrentStep] = useState(0);
-//   const [formData, setFormData] = useState({
-//     productId: null,
-//     basicInfo: {},
-//     options: [],
-//     variants: {},
-//     imageDeleteIds: [],
-//     deletedOptionIds: [],
-//     deletedVariantIds: {}
-//   });
-//   const [loading, setLoading] = useState(true);
-//   const { id } = useParams();
-//   const dispatch = useDispatch();
-//   const notification = useContext(NotificationContext);
-//   const [form1] = Form.useForm();
-//   const [form2] = Form.useForm();
-//   const [form3] = Form.useForm();
-
-//   // Lấy thông tin sản phẩm khi component được tải
-//   useEffect(() => {
-//     if (id) {
-//       fetchProductData(id);
-//     }
-//   }, [id]);
-
-//   // Hàm lấy thông tin sản phẩm
-//   const fetchProductData = async (productId) => {
-//     try {
-//       setLoading(true);
-//       const productData = await dispatch(adminDetailProduct(productId));
-
-//       if (productData) {
-//         // Chuẩn bị dữ liệu cho form
-//         const basicInfo = {
-//           name: productData.name,
-//           description: productData.description,
-//           categoryId: productData.category.id,
-//           brandId: productData.brand.id,
-//           images: productData.images || [],
-//         };
-
-//         // Đặt dữ liệu vào formData
-//         setFormData({
-//           productId: productData.id,
-//           basicInfo: basicInfo,
-//           options: productData.options || [],
-//           variants: {},
-//           imageDeleteIds: [],
-//           deletedOptionIds: [],
-//           deletedVariantIds: {}
-//         });
-
-//         // Đặt dữ liệu vào form
-//         form1.setFieldsValue(basicInfo);
-//       } else {
-//         notification.error({
-//           message: 'Lỗi',
-//           description: 'Không thể tải thông tin sản phẩm',
-//           placement: 'topRight',
-//         });
-//       }
-//     } catch (error) {
-//       console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
-//       notification.error({
-//         message: 'Lỗi',
-//         description: 'Đã xảy ra lỗi khi tải thông tin sản phẩm',
-//         placement: 'topRight',
-//       });
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Reset form values when navigating between steps to ensure data persistence
-//   useEffect(() => {
-//     if (currentStep === 0) {
-//       form1.setFieldsValue(formData.basicInfo);
-//     } else if (currentStep === 1) {
-//       // Đảm bảo rằng deletedOptionIds là một mảng trước khi sử dụng filter
-//       const safeDeletedOptionIds = Array.isArray(formData.deletedOptionIds) ? formData.deletedOptionIds : [];
-//       const optionsToShow = formData.options.filter(
-//         option => !safeDeletedOptionIds.includes(option.id)
-//       );
-//       form2.setFieldsValue({ options: optionsToShow });
-//     } else if (currentStep === 2) {
-//       form3.setFieldsValue({ variants: formData.variants });
-//     }
-//   }, [currentStep, formData, form1, form2, form3]);
-
-//   // Hàm xử lý thêm ảnh vào danh sách xóa
-//   const handleDeleteImage = (imageId) => {
-//     setFormData(prev => ({
-//       ...prev,
-//       imageDeleteIds: Array.isArray(prev.imageDeleteIds) ? [...prev.imageDeleteIds, imageId] : [imageId]
-//     }));
-//   };
-
-//   // Hàm xử lý quay lại bước trước đó với bảo toàn dữ liệu
-//   const handleBack = (fromStep, additionalData = {}) => {
-//     // Lưu dữ liệu của bước hiện tại trước khi quay lại
-//     if (fromStep === 2) {
-//       // Lưu dữ liệu từ bước Options về BasicInfo
-//       setFormData(prev => ({
-//         ...prev,
-//         options: additionalData.options || prev.options,
-//         deletedOptionIds: Array.isArray(additionalData.deletedOptionIds) ? additionalData.deletedOptionIds : prev.deletedOptionIds
-//       }));
-//     } else if (fromStep === 3) {
-//       // Lưu dữ liệu từ bước Variants về Options
-//       setFormData(prev => ({
-//         ...prev,
-//         variants: additionalData.variants || prev.variants,
-//         deletedVariantIds: additionalData.deletedVariantIds || prev.deletedVariantIds,
-//         deletedOptionIds: Array.isArray(additionalData.deletedOptionIds) ? additionalData.deletedOptionIds : prev.deletedOptionIds
-//       }));
-//     }
-    
-//     // Quay lại bước trước
-//     setCurrentStep(fromStep - 1);
-//   };
-
-//   // Hàm xử lý chuyển sang bước tiếp theo
-//   const handleNext = (stepIndex, data) => {
-//     if (stepIndex === 0) {
-//       // Từ BasicInfo sang Options
-//       setFormData(prev => ({
-//         ...prev,
-//         basicInfo: data
-//       }));
-//       setCurrentStep(1);
-//     } else if (stepIndex === 1) {
-//       // Từ Options sang Variants
-//       setFormData(prev => {
-//         return {
-//           ...prev,
-//           options: data.options,
-//           deletedOptionIds: Array.isArray(data.deletedOptionIds) ? data.deletedOptionIds : prev.deletedOptionIds
-//         };
-//       });
-//       setCurrentStep(2);
-//     } else if (stepIndex === 2) {
-//       // Từ Variants sang Review
-//       setFormData(prev => ({
-//         ...prev,
-//         variants: data.variants,
-//         deletedVariantIds: data.deletedVariantIds || prev.deletedVariantIds,
-//         deletedOptionIds: Array.isArray(data.deletedOptionIds) ? data.deletedOptionIds : prev.deletedOptionIds
-//       }));
-//       setCurrentStep(3);
-//     }
-//   };
-
-//   // Danh sách các bước
-//   const steps = [
-//     {
-//       title: 'Thông tin cơ bản',
-//       content: (
-//         <BasicInfoStep 
-//           form={form1} 
-//           onNext={(data) => handleNext(0, data)}
-//           initialValues={formData.basicInfo}
-//           existingImages={formData.basicInfo.images}
-//           onDeleteImage={handleDeleteImage}
-//         />
-//       ),
-//       icon: <UploadOutlined />
-//     },
-//     {
-//       title: 'Phiên bản laptop',
-//       content: (
-//         <OptionsStep 
-//           form={form2}
-//           onNext={(data) => handleNext(1, data)}
-//           onBack={() => handleBack(1)}
-//           initialValues={formData}
-//           deletedOptionIds={formData.deletedOptionIds}
-//           setDeletedOptionIds={(newDeletedIds) => 
-//             setFormData(prev => ({ 
-//               ...prev, 
-//               deletedOptionIds: Array.isArray(newDeletedIds) ? newDeletedIds : [] 
-//             }))
-//           }
-//         />
-//       ),
-//       icon: <PlusOutlined />
-//     },
-//     {
-//   title: 'Màu sắc',
-//   content: (
-//     <VariantsStep 
-//       form={form3}
-//       onNext={(data) => {
-//         // Đảm bảo dữ liệu deletedVariantIds được truyền đúng
-//         console.log('Dữ liệu variants khi Next:', data.variants);
-//         console.log('Dữ liệu deletedVariantIds khi Next:', data.deletedVariantIds);
-//         handleNext(2, data);
-//       }}
-//       onBack={(data) => handleBack(2, data)}
-//       initialValues={{
-//         ...formData,
-//         options: formData.options.filter(
-//           option => !Array.isArray(formData.deletedOptionIds) || !formData.deletedOptionIds.includes(option.id)
-//         )
-//       }}
-//       deletedVariantIds={formData.deletedVariantIds || {}}
-//       setDeletedVariantIds={(newDeletedIds) => {
-//         console.log('Cập nhật deletedVariantIds ở component cha:', newDeletedIds);
-//         setFormData(prev => ({ ...prev, deletedVariantIds: newDeletedIds }));
-//       }}
-//       deletedOptionIds={formData.deletedOptionIds}
-//     />
-//   ),
-//   icon: <PlusOutlined />
-// },
-//     {
-//       title: 'Đánh giá',
-//       content: (
-//         <ReviewStep 
-//           formData={formData}
-//           onSubmit={() => {
-//             // Reset form after successful submission
-//             form1.resetFields();
-//             form2.resetFields();
-//             form3.resetFields();
-//             setFormData({
-//               productId: null,
-//               basicInfo: {},
-//               options: [],
-//               variants: {},
-//               imageDeleteIds: [],
-//               deletedOptionIds: [],
-//               deletedVariantIds: {}
-//             });
-//             setCurrentStep(0);
-//           }}
-//           onBack={() => handleBack(3)}
-//         />
-//       ),
-//       icon: <CheckOutlined />
-//     }
-//   ];
-
-//   if (loading) {
-//     return (
-//       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-//         <Spin size="large" tip="Đang tải dữ liệu sản phẩm..." />
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-//       <Steps current={currentStep} style={{ marginBottom: 32 }}>
-//         {steps.map((item) => (
-//           <Step key={item.title} title={item.title} icon={item.icon} />
-//         ))}
-//       </Steps>
-      
-//       <div className="steps-content">{steps[currentStep].content}</div>
-//     </div>
-//   );
-// };
-// ======================= UPDATE PRODUCT WIZARD (NEW) =======================
 
 const UpdateProductWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);

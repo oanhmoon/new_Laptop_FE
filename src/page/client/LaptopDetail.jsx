@@ -129,10 +129,7 @@ const LaptopDetail = () => {
             setLoading(false);
         }
     };
-    // useEffect(() => {
-    //     fetchProductDetail(id);
-
-    // }, [dispatch, id]);
+    
     
 
     useEffect(() => {
@@ -186,13 +183,7 @@ const LaptopDetail = () => {
         return basePrice + variantPrice;
     };
 
-    // const renderStars = (rating) => {
-    //     return [1, 2, 3, 4, 5].map((star) => (
-    //         star <= rating ?
-    //             <StarFilled key={star} className="star-filled" /> :
-    //             <StarOutlined key={star} className="star-outlined" />
-    //     ));
-    // };
+    
     const renderStars = (rating, totalRating) => {
   // Nếu chưa có đánh giá, hiển thị 5 sao trống
   if (!totalRating || totalRating <= 0) {
@@ -253,33 +244,7 @@ const LaptopDetail = () => {
         const savedUser = localStorage.getItem('USER_LOGIN');
         return savedUser ? JSON.parse(savedUser) : null;
     });
-    // const ReviewItem = ({ name, avatar, date, rating, comment }) => {
-    //     return (
-    //         <div className="review-item">
-    //             <div className="review-header">
-    //                 <div className="reviewer-info">
-    //                     <Avatar
-    //                         size={48}
-    //                         src={avatar}
-    //                         icon={<UserOutlined />}
-    //                         alt={name}
-    //                     />
-    //                     <div>
-    //                         <div className="reviewer-name">{name}</div>
-    //                         <div className="review-date">{date}</div>
-    //                     </div>
-    //                 </div>
-    //                 <Rate
-    //                     disabled
-    //                     value={rating}
-    //                     className="review-rating"
-    //                     character={({ index }) => index < rating ? <StarFilled /> : <StarOutlined />}
-    //                 />
-    //             </div>
-    //             <p className="review-comment">{comment}</p>
-    //         </div>
-    //     );
-    // };
+    
 
     const ReviewItem = ({
     name,
@@ -349,44 +314,7 @@ const LaptopDetail = () => {
 };
 
 
-//     useEffect(() => {
-//     const fetchFavoriteStatus = async () => {
-//         if (userData?.id && optionId) {
-//             const res = await dispatch(checkFavorite(userData.id, optionId));
-//             setIsFavorite(res);
-//         }
-//     };
-//     fetchFavoriteStatus();
-// }, [dispatch, userData?.id, optionId]);
-// useEffect(() => {
-//   if (!userData?.id || !productDetail?.id || !optionId) return;
 
-//   const fetchFavoriteStatus = async () => {
-//     const res = await dispatch(checkFavorite(userData.id, optionId));
-//     console.log("❤️ Favorite status:", res);
-//     setIsFavorite(!!res); // đảm bảo boolean
-//   };
-
-//   fetchFavoriteStatus();
-// }, [dispatch, userData?.id, productDetail?.id, optionId]);
-
-// useEffect(() => {
-//   const fetchData = async () => {
-//     const response = await fetchProductDetail(id);
-
-//     // ✅ Nếu có user đăng nhập thì ghi lại lịch sử xem
-//     if (userData?.id && optionId) {
-//       try {
-//         const res = await userViewHistoryService.recordView(userData.id, optionId);
-//         console.log("📌 Lưu lịch sử xem thành công:", res);
-//       } catch (error) {
-//         console.error("❌ Ghi lịch sử xem thất bại:", error);
-//       }
-//     }
-//   };
-
-//   fetchData();
-// }, [dispatch, id, userData?.id]);
 useEffect(() => {
   fetchProductDetail(id);
 }, [id]);
@@ -412,8 +340,8 @@ useEffect(() => {
 
   const fetchFavoriteStatus = async () => {
     const result = await dispatch(checkFavorite(userData.id, optionId));
-    console.log("❤️ Favorite result from API:", result);
-    setIsFavorite(Boolean(result)); // đúng rồi
+    console.log(" Favorite result from API:", result);
+    setIsFavorite(Boolean(result)); 
   };
 
   fetchFavoriteStatus();
@@ -497,12 +425,16 @@ useEffect(() => {
             } else {
                 notification.error({
                     message: "Lỗi",
-                    description: "Không thể thêm vào giỏ hàng",
+                    description: "Số lượng còn lại hiện tại không đủ",
                     placement: "topRight",
                 });
             }
         }
     };
+
+    const currentVariant =
+        productDetail?.productVariants?.[selectedVariant];
+
 
 
     return (
@@ -531,59 +463,26 @@ useEffect(() => {
                             maxWidth: '800px',
                         }}
                     >
-                        {/* {productDetail.product.images.map((image, index) => (
-                            <div
-                                key={index}
-                                className={`thumbnail ${selectedImage === index ? 'thumbnail-active' : ''}`}
-                                onClick={() => setSelectedImage(index)}
-                                style={{
-                                    flex: '0 0 auto',
-                                    width: '80px',
-                                    height: '80px',
-                                    minWidth: '80px',
-                                    border: selectedImage === index ? '2px solid #1890ff' : '1px solid #ddd',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    overflow: 'hidden',
-                                    position: 'relative',
-                                    backgroundColor: '#f5f5f5'
-                                }}
-                            >
-                                <img
-                                    src={image.url}
-                                    alt={`Thumbnail ${index + 1}`}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        display: 'block'
-                                    }}
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = 'data:image/svg+xml;base64,...'; // Ảnh fallback
-                                    }}
-                                />
-                            </div>
-                        ))} */}
+                        
                         {productDetail.images.map((image, index) => (
-    <div
-      key={index}
-      className={`thumbnail ${selectedImage === index ? "thumbnail-active" : ""}`}
-      onClick={() => setSelectedImage(index)} // ⭐ đây đồng bộ
-      style={{
-        width: 80,
-        height: 80,
-        border: selectedImage === index ? "2px solid #1890ff" : "1px solid #ddd",
-      }}
-    >
-      <img
-        src={image.url}
-        alt={`Thumbnail ${index + 1}`}
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        onError={(e) => { e.target.src = banner1; }}
-      />
-    </div>
-  ))}
+                            <div
+                            key={index}
+                            className={`thumbnail ${selectedImage === index ? "thumbnail-active" : ""}`}
+                            onClick={() => setSelectedImage(index)} // ⭐ đây đồng bộ
+                            style={{
+                                width: 80,
+                                height: 80,
+                                border: selectedImage === index ? "2px solid #1890ff" : "1px solid #ddd",
+                            }}
+                            >
+                            <img
+                                src={image.url}
+                                alt={`Thumbnail ${index + 1}`}
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                onError={(e) => { e.target.src = banner1; }}
+                            />
+                            </div>
+                        ))}
                     </div>
                     <div className="features-grid">
                         <Card className="feature-card">
@@ -617,12 +516,7 @@ useEffect(() => {
                 <div className="product-info">
                     <div className="product-header">
                         <h1 className="product-title">{productDetail.product.name}</h1>
-                        {/* <div className="rating-container">
-                            <div className="stars">
-                                {renderStars(productDetail.ratingAverage)}
-                            </div>
-                            <span className="rating-text">{productDetail.ratingAverage} / 5 ({productDetail.totalRating} đánh giá)</span>
-                        </div> */}
+                        
                         <div className="rating-container">
                             <div className="stars">
                                 {renderStars(productDetail?.ratingAverage, productDetail?.totalRating)}
@@ -641,9 +535,33 @@ useEffect(() => {
 
                         <div className="price-container">
                             <span className="current-price">{formatPrice(calculatePrice())}</span>
-                            {/* <span className="old-price">{formatPrice(calculatePrice() * 1.1)}</span>
-                            <Badge count="-10%" style={{backgroundColor: '#f5222d'}}/> */}
+                        
                         </div>
+                        {currentVariant && (
+                            <div
+                                style={{
+                                marginTop: 8,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8,
+                                fontSize: 14,
+                                }}
+                            >
+                                <span style={{ color: "#6b7280" }}>Tồn kho:</span>
+
+                                <span
+                                style={{
+                                    fontWeight: 600,
+                                    color: currentVariant.stock > 0 ? "#16a34a" : "#dc2626",
+                                }}
+                                >
+                                {currentVariant.stock > 0
+                                    ? `${currentVariant.stock} sản phẩm`
+                                    : "Hết hàng"}
+                                </span>
+                            </div>
+                        )}
+
                         <div
                             dangerouslySetInnerHTML={{ __html: productDetail.product.description }}
                         ></div>
@@ -674,11 +592,7 @@ useEffect(() => {
 
                                     style={{ marginBottom: 16, position: 'relative' }}
                                 >
-                                    {/* {index === 1 && ( // Assuming the second option is most popular
-                                        <Badge.Ribbon text="Phổ biến" color="red" placement="end">
-                                            <div></div>
-                                        </Badge.Ribbon>
-                                    )} */}
+                                    
                                     <div className="config-content-small"
                                          style={{ display: 'flex', alignItems: 'center' }}>
                                         <div
@@ -714,46 +628,7 @@ useEffect(() => {
                         </div>
                     </div>
 
-                    {/* Color Selection */}
-                    {/* <div className="color-section">
-                        <h3 className="section-title">Chọn màu sắc</h3>
-                        <div className="color-options">
-                            {productDetail.productVariants.map((variant, index) => (
-                                <div
-                                    key={variant.id}
-                                    className="color-option"
-                                    onClick={() => {
-                                        setVariantId(variant.id);
-                                        setSelectedVariant(index);
-                                    }}
-
-                                >
-                                    {/* <div
-                                        className={`color-circle ${selectedVariant === index ? 'color-circle-active' : ''}`}
-                                        style={{ backgroundColor: getColorHex(variant.color) }}
-                                    /> */}
-                                    {/* <div
-          className={`color-circle ${selectedVariant === index ? 'color-circle-active' : ''}`}
-        >
-          <img
-            src={variant.imageUrl}   // ✅ dùng đúng key
-            alt={variant.color}
-            className="color-image"
-            onError={(e) => { e.target.style.display = 'none'; }} // fallback nếu ảnh lỗi
-          />
-        </div>
-
-
-                                    <span className={`color-name ${selectedVariant === index ? 'color-name-active' : ''}`}>
-                                        {variant.color}
-                                    </span>
-                                        <span className="color-price-adjustment">
-                                            +{formatPrice(variant.priceDiff)}
-                                        </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div> */}
+                    
 
                     <div className="color-section">
                         <h3 className="section-title">Chọn màu sắc</h3>
@@ -799,6 +674,7 @@ useEffect(() => {
                             size="large"
                             className="buy-now-btn"
                             onClick={handleBuyNow}
+                            disabled={!currentVariant || currentVariant.stock <= 0}
                         >
                             <ShoppingCartOutlined />
                             Mua ngay
@@ -811,10 +687,7 @@ useEffect(() => {
                                 <ShoppingCartOutlined />
                                 Thêm vào giỏ
                             </Button>
-                            {/* <Button size="large" className="secondary-btn">
-                                <HeartOutlined />
-                                Yêu thích
-                            </Button> */}
+                            
                             <Button size="large" className="secondary-btn"
                                 onClick={handleFavorite}
                                 style={{
@@ -889,20 +762,7 @@ useEffect(() => {
                     </TabPane>
                     <TabPane tab={`Đánh giá (${productDetail.totalRating})`} key="reviews">
                         <Card>
-                            {/* <div className="reviews-header">
-                                <div className="rating-overview">
-                                    <div className="rating-score">{productDetail.ratingAverage}</div>
-                                    <div>
-                                        <div className="stars-container">
-                                            {renderStars(productDetail.ratingAverage)}
-                                            <StarFilled className="star-half" />
-                                        </div>
-                                        <div className="rating-count">Dựa trên {productDetail.totalRating} đánh giá</div>
-                                    </div>
-                                </div>
-                                <Button type="primary" onClick={() => setIsModalOpen(true)}
-                                    >Viết đánh giá</Button>
-                            </div> */}
+                            
 
                             <div className="reviews-header">
                                 <div className="rating-overview">
@@ -924,10 +784,6 @@ useEffect(() => {
                                 </div>
                             </div>
                 </div>
-
-  {/* <Button type="primary" onClick={() => setIsModalOpen(true)}>
-    Viết đánh giá
-  </Button> */}
             </div>
 
                             <div className="reviews-list">
@@ -940,8 +796,8 @@ useEffect(() => {
                                                     rating={review.rating}
                                                     comment={review.comment}
                                                     date={formatDate(review.createdAt)}
-                                                    images={review.images}      // ⭐ THÊM
-    videos={review.videos}
+                                                    images={review.images}      
+                                                    videos={review.videos}
                                                 />
                                                 {index < reviews.length - 1 && <Divider/>}
                                             </React.Fragment>

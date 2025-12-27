@@ -440,3 +440,9 @@
     margin-top: 20px;
     padding: 10px 0;
 }
+.quantity-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: #e5e5e5 !important;
+    border-color: #d4d4d4 !important;
+}

@@ -216,69 +216,76 @@ const UserManagement = () => {
         </Tag>
       ),
     },
-    // {
-    //   title: 'Thao tác',
-    //   key: 'action',
-    //   render: (_, record) => (
-    //     <Button 
-    //       type={record.isBlocked ? "primary" : "danger"}
-    //       icon={record.isBlocked ? <UnlockOutlined /> : <LockOutlined />}
-    //       onClick={() => showBlockModal(record)}
-    //       size="middle"
-    //       title={record.isBlocked ? "Mở khóa" : "Khóa"}
-    //       style={{ borderRadius: '4px' }}
-    //     />
-    //   ),
-    //   width: 80,
-    //   align: 'center'
-    // },
+    
     {
-  title: 'Thao tác',
-  key: 'action',
-  align: 'center',
-  width: 150,
-  render: (_, record) => (
-    <Space>
-      {/* Nút Khóa / Mở khóa */}
-      <Button
-        type={record.isBlocked ? "primary" : "danger"}
-        icon={record.isBlocked ? <UnlockOutlined /> : <LockOutlined />}
-        onClick={() => showBlockModal(record)}
-        size="middle"
-        title={record.isBlocked ? "Mở khóa" : "Khóa"}
-        style={{ borderRadius: '4px' }}
-      />
+      title: 'Thao tác',
+      key: 'action',
+      align: 'center',
+      width: 150,
+      render: (_, record) => (
+        <Space>
+          {/* Nút Khóa / Mở khóa */}
+          <Button
+            type={record.isBlocked ? "primary" : "danger"}
+            icon={record.isBlocked ? <UnlockOutlined /> : <LockOutlined />}
+            onClick={() => showBlockModal(record)}
+            size="middle"
+            title={record.isBlocked ? "Mở khóa" : "Khóa"}
+            style={{ borderRadius: '4px' }}
+          />
 
-      {/* Nút Chat */}
-      <Button
-        type="default"
-        icon={<MessageOutlined />}
-        onClick={() => handleChat(record)}
-        size="middle"
-        title="Chat với người dùng"
-        style={{ borderRadius: '4px' }}
-      />
-    </Space>
-  ),
-},
+          {/* Nút Chat */}
+          <Button
+            type="default"
+            icon={<MessageOutlined />}
+            onClick={() => handleChat(record)}
+            size="middle"
+            title="Chat với người dùng"
+            style={{ borderRadius: '4px' }}
+          />
+        </Space>
+      ),
+    },
 
   ];
 
   return (
     <ConfigProvider
       theme={{
-        components: {
-          Table: {
-            headerBg: '#1890ff',
-            headerColor: 'white',
-          },
-        },
         token: {
           fontFamily: "'Montserrat', 'Roboto', sans-serif",
-        }
+          colorPrimary: '#000000',
+          colorBorder: '#d9d9d9',
+          colorBorderHover: '#000000',
+        },
+        components: {
+          Table: {
+            headerBg: '#010508ff',
+            headerColor: 'white',
+          },
+          Button: {
+            borderColorHover: '#000000',
+            colorPrimaryHover: '#000000',
+            colorPrimaryActive: '#000000',
+          },
+          Select: {
+            colorBorderHover: '#000000',
+            optionActiveBg: '#f0f0f0',
+            optionSelectedBg: '#e6e6e6',
+          },
+          Input: {
+            colorBorderHover: '#000000',
+          },
+          Pagination: {
+            itemActiveBorderColor: '#000000',  
+            itemActiveColor: '#000000',         
+            itemHoverBorderColor: '#000000',   
+            itemHoverColor: '#000000',          
+          },
+        },
       }}
     >
-    <div style={{ padding: 24, background: '#fff'}}>
+      <div style={{ padding: 24, background: '#fff' }}>
       
       {/* Title */}
       <div style={{ 
@@ -415,7 +422,7 @@ const UserManagement = () => {
         confirmLoading={loading}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <ExclamationCircleFilled style={{ color: userToToggleBlock?.isBlocked ? '#1890ff' : '#ff4d4f', fontSize: '22px' }} />
+          <ExclamationCircleFilled style={{ color: userToToggleBlock?.isBlocked ? '#000408ff' : '#ff4d4f', fontSize: '22px' }} />
           <p style={{ margin: 0 }}>
             {userToToggleBlock?.isBlocked ? (
               <>Bạn có chắc chắn muốn <strong>mở khóa</strong> tài khoản của <strong>{userToToggleBlock?.fullName}</strong>?</>

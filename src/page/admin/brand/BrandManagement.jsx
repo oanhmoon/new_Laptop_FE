@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+
 import { Table, Input, Button, Space, Modal, Form, Upload, message, Image, Tag, ConfigProvider, Select, Typography, Pagination } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined, GlobalOutlined, SortAscendingOutlined, SortDescendingOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -340,11 +341,26 @@ const BrandManagement = () => {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button 
+          {/* <Button 
             type="primary" 
             icon={<EditOutlined />} 
             onClick={() => showModal(record)}
-          />
+          /> */}
+
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: "#000",
+                colorTextLightSolid: "#fff"
+              }
+            }}
+          >
+            <Button 
+              type="primary" 
+              icon={<EditOutlined />} 
+              onClick={() => showModal(record)}
+            />
+          </ConfigProvider>
           <Button 
             danger 
             icon={<DeleteOutlined />} 
@@ -390,11 +406,13 @@ const BrandManagement = () => {
       theme={{
         components: {
           Table: {
-            headerBg: '#1890ff',
+            headerBg: '#01060bff',
             headerColor: 'white',
           },
         },
         token: {
+          colorPrimary: '#000000',      
+          colorBorderHover: '#000000',
           fontFamily: "'Montserrat', 'Roboto', sans-serif",
         }
       }}
@@ -419,15 +437,24 @@ const BrandManagement = () => {
           Quản lý nhãn hàng laptop
         </Title>
         
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />}
-          onClick={() => showModal()}
-          size="large"
-          style={{ height: 48 }} // Match height with title
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#000",
+              colorTextLightSolid: "#fff"
+            }
+          }}
         >
-          Thêm nhãn hàng
-        </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="large"
+            style={{ height: 48 }}
+            onClick={() => showModal()}
+          >
+            Thêm nhãn hàng
+          </Button>
+        </ConfigProvider>
       </div>
       
       {/* Search and Filter */}

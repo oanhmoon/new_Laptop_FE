@@ -4,3 +4,24 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+/* Viền ngoài table */
+.ant-table-wrapper .ant-table {
+  border-color: #000 !important;
+}
+
+/* Vạch ngăn cột + hàng */
+.ant-table-wrapper .ant-table-thead > tr > th,
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-color: #000 !important;
+}
+
+/* Vạch phân cách header */
+.ant-table-wrapper .ant-table-thead > tr > th {
+  border-bottom: 1px solid #000 !important;
+}
+
+/* Hover row vẫn giữ viền đen */
+.ant-table-wrapper .ant-table-tbody > tr:hover > td {
+  border-color: #000 !important;
+}

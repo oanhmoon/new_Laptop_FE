@@ -69,16 +69,16 @@ const ChatBox = ({ showChatBox, toggleChatBox }) => {
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
-        console.log("✅ WebSocket connected (User)");
+        console.log(" WebSocket connected (User)");
         client.subscribe(`/user/${userId}/queue/messages`, (message) => {
           const msg = JSON.parse(message.body);
-          console.log("📩 Tin nhắn mới:", msg);
+          console.log(" Tin nhắn mới:", msg);
           setMessages((prev) => [...prev, msg]);
           setNewMessageAlert(true);
           if (!userScrolling.current) scrollToBottom(true);
         });
       },
-      onStompError: (frame) => console.error("❌ STOMP error:", frame),
+      onStompError: (frame) => console.error(" STOMP error:", frame),
     });
 
     client.activate();
@@ -172,7 +172,7 @@ const ChatBox = ({ showChatBox, toggleChatBox }) => {
       //setMessages((prev) => [...prev, msg]);
       scrollToBottom(true);
     } catch (err) {
-      console.error("❌ Lỗi upload:", err);
+      console.error(" Lỗi upload:", err);
       alert("Tải file thất bại");
     }
   };

@@ -23,6 +23,17 @@ const CheckoutConfirmation = () => {
         const savedUser = localStorage.getItem('USER_LOGIN');
         return savedUser ? JSON.parse(savedUser) : null;
     });
+
+    useEffect(() => {
+        if (!userData) return;
+
+        setFormData(prev => ({
+            ...prev,
+            fullName: userData.fullName || '',
+            email: userData.email || '',
+        }));
+    }, [userData]);
+
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -154,11 +165,14 @@ const CheckoutConfirmation = () => {
 
                 case 'VNPAY':
                     const paymentRes = await dispatch(createUrlPay(total, res.data.orderId));
-                    if (!paymentRes?.payload?.url) {
+
+                    if (!paymentRes?.url) {
                         throw new Error('Failed to create payment URL');
                     }
-                    window.location.href = paymentRes.payload.url;
+
+                    window.location.href = paymentRes.url;
                     break;
+
 
                 default:
                     throw new Error('Phương thức thanh toán không hợp lệ');

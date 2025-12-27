@@ -63,11 +63,11 @@ const Sidebar = ({ isCollapsed }) => {
           name: 'Quản lý đơn hàng',
           icon: <ShoppingCart size={20} />
         },
-        {
-          path: '/admin/withdrawals',
-          name: 'Quản lý rút tiền',
-          icon: <Wallet size={20} />
-        },
+        // {
+        //   path: '/admin/withdrawals',
+        //   name: 'Quản lý rút tiền',
+        //   icon: <Wallet size={20} />
+        // },
         {
           path: '/admin/message',
           name: 'Hỗ trợ khách hàng',

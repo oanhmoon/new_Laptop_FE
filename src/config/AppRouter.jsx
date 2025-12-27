@@ -29,6 +29,10 @@ import WithdrawalScreen from "../page/client/WithdrawalScreen";
 import WithdrawalManagement from '../page/admin/withdrawal/WithdrawalManagement';
 import WithdrawalHistory from "../page/client/WithdrawalHistory";
 import FavoriteProducts from "../page/client/FavoriteProducts";
+import TermsService from "../page/client/TermsService";
+import PrivacyPolicy from "../page/client/PrivacyPolicy";
+import WarrantyPolicy from "../page/client/WarrantyPolicy";
+
 
 // Layout component cho user routes
 const UserLayout = ({ children }) => (
@@ -54,9 +58,10 @@ export function AppRouter() {
       <Route path="/search" element={<UserLayout><LaptopGrid /></UserLayout>} />
       <Route path="/wallet/:id" element={<UserLayout><WithdrawalScreen /></UserLayout>} />
       <Route path="/wallet-history/:id" element={<UserLayout><WithdrawalHistory /></UserLayout>} />
-      <Route
-  path="/favorites/:id"
-  element={<UserLayout><FavoriteProducts /></UserLayout>}
+      <Route path="/favorites/:id" element={<UserLayout><FavoriteProducts /></UserLayout>} />
+      <Route path="/dieu-khoan-dich-vu" element={<UserLayout><TermsService /></UserLayout>} />
+      <Route path="/chinh-sach-bao-mat" element={<UserLayout><PrivacyPolicy /></UserLayout>} />
+      <Route path="/chinh-sach-bao-hanh" element={<UserLayout><WarrantyPolicy /></UserLayout>}
 />
 
       

@@ -74,29 +74,7 @@ const TestimonialsNewsletter = () => {
                 </div>
             </section>
 
-            {/* Newsletter Section */}
-            {/* <section className="newsletter-section">
-                <div className="container-fluid">
-                    <div className="newsletter-content">
-                        <h2 className="newsletter-title">Đăng ký nhận thông tin khuyến mãi</h2>
-                        <p className="newsletter-subtitle">
-                            Nhận ngay voucher giảm giá 500.000đ cho đơn hàng đầu tiên khi đăng ký
-                        </p>
-
-                        <form className="newsletter-form">
-                            <Input
-                                type="email"
-                                placeholder="Email của bạn"
-                                className="email-input"
-                                required
-                            />
-                            <Button type="submit" className="subscribe-button">
-                                Đăng ký ngay
-                            </Button>
-                        </form>
-                    </div>
-                </div>
-            </section> */}
+            
         </>
     );
 };

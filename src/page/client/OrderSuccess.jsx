@@ -150,9 +150,9 @@ const OrderSuccess = () => {
                         <Button type="primary" key="home" onClick={() => navigate('/')}>
                             Về trang chủ
                         </Button>,
-                        <Button key="order" onClick={() => navigate('/cart')}>
-                            Quay lại giỏ hàng
-                        </Button>,
+                        // <Button key="order" onClick={() => navigate('/cart')}>
+                        //     Quay lại giỏ hàng
+                        // </Button>,
                     ]}
                 />
             </div>
@@ -172,9 +172,9 @@ const userId = userData?.id;
                         <Button type="primary" key="home" onClick={() => navigate('/')}>
                             Về trang chủ
                         </Button>,
-                        <Button key="order" onClick={() => navigate(`/history/${userId}`)}>
-                            Kiểm tra đơn hàng
-                        </Button>,
+                        // <Button key="order" onClick={() => navigate(`/history/${userId}`)}>
+                        //     Kiểm tra đơn hàng
+                        // </Button>,
                     ]}
                 />
             </div>
@@ -205,16 +205,14 @@ const userId = userData?.id;
                             <p>Thời gian: <Text strong>{paymentDetails?.paymentTime}</Text></p>
                         </div>
                     ) : (
-                        "Đơn hàng đã được xác nhận và sẽ được vận chuyển đến bạn sớm."
+                        "Đơn hàng đang chờ xác nhận và sẽ được vận chuyển đến bạn sớm."
                     )
                 }
                 extra={[
                     <Button type="primary" key="home" onClick={() => navigate('/')}>
                         Về trang chủ
                     </Button>,
-                    <Button key="order" onClick={() => navigate(hasVnpayParams ? `/orders/${paymentDetails?.orderId}` : '/orders')}>
-                        {hasVnpayParams ? 'Xem chi tiết đơn hàng' : 'Xem đơn hàng'}
-                    </Button>,
+                    
                 ]}
             />
         </div>

@@ -1,15 +1,17 @@
+
+
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2, ArrowLeft, CreditCard, ShieldCheck } from "lucide-react";
-import { Button, Input, message, Pagination, Tag, Radio, Checkbox, Spin } from "antd";
+import { Button, Input, message, Pagination, Tag, Checkbox, Spin } from "antd";
 import "../style/CartPage.css";
 import { NotificationContext } from "../../components/NotificationProvider";
 import {
     deleteAllCartItems,
     deleteCartItem,
-    getCartItemByIdUser, totalCartItem,
+    getCartItemByIdUser,
     updateCartItemQuantity
 } from "../../Redux/actions/CartItemThunk";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import ConfirmDeleteModal from "../../components/ModalComponents/ConfirmDeleteModal";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +44,7 @@ const CartPage = () => {
     const [updatingQuantities, setUpdatingQuantities] = useState({});
     const [vouchers, setVouchers] = useState([]);
 
+    // fetch vouchers
     useEffect(() => {
         const fetchVouchers = async () => {
             try {
@@ -57,50 +60,94 @@ const CartPage = () => {
         fetchVouchers();
     }, [dispatch]);
 
+    // fetch cart items
     useEffect(() => {
         const fetchCartItems = async () => {
-            if (userData?.id) {
-                setLoading(true);
-                try {
-                    const response = await dispatch(getCartItemByIdUser(currentPage - 1, PAGE_SIZE, userData.id));
-                    setCartItems(response.content || []);
-                    setTotalItems(response.totalElements);
-                    if (response.content && response.content.length > 0) {
-                        setSelectedProducts([response.content[0].id]);
+            if (!userData?.id) {
+                setCartItems([]);
+                setTotalItems(0);
+                setSelectedProducts([]);
+                return;
+            }
+
+            setLoading(true);
+            try {
+                const response = await dispatch(getCartItemByIdUser(currentPage - 1, PAGE_SIZE, userData.id));
+                const items = response?.content || [];
+                setCartItems(items);
+                setTotalItems(response?.totalElements || 0);
+
+                // chọn mặc định 1 item hợp lệ (nếu trước đó không có selection)
+                // hoặc lọc selection hiện có để loại bỏ item không hợp lệ (hết hàng hoặc quantity > stock)
+                setSelectedProducts(prev => {
+                    // nếu chưa có selection, chọn item đầu tiên hợp lệ
+                    const validIds = items
+                        .filter(p => {
+                            const avail = Number(p.availableStock ?? 0);
+                            return avail > 0 && (p.quantity <= avail);
+                        })
+                        .map(p => p.id);
+
+                    if (!prev || prev.length === 0) {
+                        return validIds.length > 0 ? [validIds[0]] : [];
                     }
-                } catch (error) {
-                    notification.error({
-                        message: 'Lỗi',
-                        description: 'Không thể tải giỏ hàng',
-                        placement: 'topRight',
-                    });
-                } finally {
-                    setLoading(false);
-                }
+
+                    // giữ lại những id vẫn hợp lệ
+                    return prev.filter(id => validIds.includes(id));
+                });
+            } catch (error) {
+                notification.error({
+                    message: 'Lỗi',
+                    description: 'Không thể tải giỏ hàng',
+                    placement: 'topRight',
+                });
+            } finally {
+                setLoading(false);
             }
         };
         fetchCartItems();
     }, [currentPage, userData?.id, dispatch, notification]);
+
     const showPagination = totalItems > PAGE_SIZE;
 
+    // select / deselect a product
     const handleSelectProduct = (productId, checked) => {
         if (checked) {
-            setSelectedProducts(prev => [...prev, productId]);
+            setSelectedProducts(prev => {
+                if (!prev.includes(productId)) return [...prev, productId];
+                return prev;
+            });
         } else {
             setSelectedProducts(prev => prev.filter(id => id !== productId));
         }
     };
 
+    // select all only valid items on current page
     const handleSelectAll = (checked) => {
-        const currentPageIds = cartItems.map(p => p.id);
-        setSelectedProducts(checked ? [...new Set([...currentPageIds])] : []);
-        setSelectAll(checked);
+        if (checked) {
+            const currentPageIds = cartItems
+                .filter(p => {
+                    const avail = Number(p.availableStock ?? 0);
+                    const isOut = avail <= 0;
+                    const isExceed = p.quantity > avail;
+                    return !isOut && !isExceed;
+                })
+                .map(p => p.id);
+            setSelectedProducts(Array.from(new Set(currentPageIds)));
+            setSelectAll(true);
+        } else {
+            setSelectedProducts([]);
+            setSelectAll(false);
+        }
     };
 
     const { selectedSubtotal, selectedDiscountValue, shippingFee, selectedTotal } = useMemo(() => {
         const subtotal = cartItems
             .filter(item => selectedProducts.includes(item.id))
-            .reduce((sum, item) => sum + (item.basePrice * item.quantity), 0);
+            .reduce((sum, item) => {
+                const price = Number(item.basePrice ?? 0);
+                return sum + (price * Number(item.quantity ?? 0));
+            }, 0);
 
         let discountValue = 0;
         if (appliedVoucher) {
@@ -126,6 +173,7 @@ const CartPage = () => {
         };
     }, [selectedProducts, appliedVoucher, cartItems]);
 
+    // keep selectAll checkbox state in sync
     useEffect(() => {
         const allSelected = cartItems.length > 0 && cartItems.every(item =>
             selectedProducts.includes(item.id)
@@ -258,9 +306,10 @@ const CartPage = () => {
         try {
             await dispatch(deleteCartItem(id));
             setCartItems(prev => prev.filter(item => item.id !== id));
-            setTotalItems(prev => prev - 1);
+            setTotalItems(prev => Math.max(0, prev - 1));
             setSelectedProducts(prev => prev.filter(itemId => itemId !== id));
             message.success("Xóa sản phẩm thành công");
+            // avoid full reload if possible; but keep behavior close to existing code
             window.location.reload();
         } catch (error) {
             notification.error({
@@ -318,8 +367,9 @@ const CartPage = () => {
                 quantity: newQuantity
             }));
 
+            // your thunk may return different structure — keep existing behavior
             if (result !== 200) {
-                throw new Error('Số lượng mặt hàng này không đủ ');
+                throw new Error('Số lượng mặt hàng này không đủ');
             }
 
             setCartItems(prev => prev.map(item =>
@@ -332,10 +382,7 @@ const CartPage = () => {
                 description: 'Số lượng mặt hàng này không đủ',
                 placement: 'topRight',
             });
-
-            // Có thể thêm logic khôi phục số lượng cũ nếu cần
         } finally {
-            // Tắt trạng thái loading
             setUpdatingQuantities(prev => ({ ...prev, [productId]: false }));
         }
     };
@@ -393,73 +440,101 @@ const CartPage = () => {
                             </div>
                             <h2>Sản phẩm</h2>
                         </div>
+
                         <div className="card-content">
-                            {cartItems.map((product) => (
-                                <React.Fragment key={product.id}>
-                                    <div className="product-item">
-                                        <div className="product-select">
-                                            <Checkbox
-                                                checked={selectedProducts.includes(product.id)}
-                                                onChange={(e) => handleSelectProduct(product.id, e.target.checked)}
-                                            />
-                                        </div>
-                                        <div className="product-image-container">
-                                            <img
-                                                src={product.imageUrl || '/default-product-image.png'}
-                                                alt={product.productName}
-                                                className="product-image"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.src = '/default-product-image.png';
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="product-details">
-                                            <div className="product-header-cart">
-                                                <h3 className="product-name">{product.productName + " " + product.productCode}</h3>
-                                                <p className="product-price">
-                                                    {(product.basePrice * product.quantity).toLocaleString()}₫
-                                                </p>
+                            {cartItems.map((product) => {
+                                const availStock = Number(product.availableStock ?? 0);
+                                const isOutOfStock = availStock <= 0;
+                                const isExceedStock = Number(product.quantity ?? 0) > availStock;
+                                const disabledItem = isOutOfStock || isExceedStock;
+
+                                return (
+                                    <React.Fragment key={product.id}>
+                                        <div className="product-item">
+                                            <div className="product-select">
+                                                <Checkbox
+                                                    checked={selectedProducts.includes(product.id)}
+                                                    disabled={disabledItem}
+                                                    onChange={(e) => handleSelectProduct(product.id, e.target.checked)}
+                                                />
                                             </div>
-                                            <p className="product-description">{product.cpu + ", " + product.ram +", "+ product.storage + ", " + product.gpu + ', ' + product.color }</p>
-                                            <div className="product-actions">
-                                                <div className="quantity-control">
+
+                                            <div className="product-image-container">
+                                                <img
+                                                    src={product.imageUrl || '/default-product-image.png'}
+                                                    alt={product.productName}
+                                                    className="product-image"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.src = '/default-product-image.png';
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div className="product-details">
+                                                <div className="product-header-cart">
+                                                    <h3 className="product-name">{product.productName + " " + product.productCode}</h3>
+                                                    <p className="product-price">
+                                                        {(Number(product.basePrice ?? 0) * Number(product.quantity ?? 0)).toLocaleString()}₫
+                                                    </p>
+                                                </div>
+
+                                                <div className="product-description">
+                                                    {product.cpu + ", " + product.ram + ", " + product.storage + ", " + product.gpu + ', ' + product.color}
+                                                    {isOutOfStock && (
+                                                        <div className="stock-error" style={{ color: '#d93025', marginTop: 6 }}>
+                                                            Sản phẩm đã hết hàng — vui lòng xóa khỏi giỏ hàng.
+                                                        </div>
+                                                    )}
+
+                                                    {!isOutOfStock && isExceedStock && (
+                                                        <div className="stock-error" style={{ color: '#d93025', marginTop: 6 }}>
+                                                            Số lượng đã vượt quá tồn kho (tồn kho: {availStock}). Vui lòng giảm số lượng.
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="product-actions">
+                                                    <div className="quantity-control">
+                                                        <button
+                                                            className="quantity-button"
+                                                            onClick={() => handleQuantityChange(product.id, Number(product.quantity) - 1)}
+                                                            disabled={Number(product.quantity) <= 1 || updatingQuantities[product.id] || isOutOfStock}
+                                                        >
+                                                            <Minus className="icon-sm" />
+                                                        </button>
+                                                        <span className="quantity">
+                                                            {updatingQuantities[product.id] ? (
+                                                                <Spin size="small" />
+                                                            ) : (
+                                                                product.quantity
+                                                            )}
+                                                        </span>
+                                                        <button
+                                                            className="quantity-button"
+                                                            onClick={() => handleQuantityChange(product.id, Number(product.quantity) + 1)}
+                                                            disabled={updatingQuantities[product.id] || isOutOfStock || Number(product.quantity) >= availStock}
+                                                        >
+                                                            <Plus className="icon-sm" />
+                                                        </button>
+                                                    </div>
+
                                                     <button
-                                                        className="quantity-button"
-                                                        onClick={() => handleQuantityChange(product.id, product.quantity - 1)}
-                                                        disabled={product.quantity <= 1 || updatingQuantities[product.id]}
-                                                    >
-                                                        <Minus className="icon-sm" />
-                                                    </button>
-                                                    <span className="quantity">
-                                                        {updatingQuantities[product.id] ? (
-                                                            <Spin size="small" />
-                                                        ) : (
-                                                            product.quantity
-                                                        )}
-                                                    </span>
-                                                    <button
-                                                        className="quantity-button"
-                                                        onClick={() => handleQuantityChange(product.id, product.quantity + 1)}
+                                                        className="remove-button"
+                                                        onClick={() => handleDelete(product.id)}
                                                         disabled={updatingQuantities[product.id]}
                                                     >
-                                                        <Plus className="icon-sm" />
+                                                        <Trash2 className="icon-sm" />
+                                                        <span>Xóa</span>
                                                     </button>
                                                 </div>
-                                                <button
-                                                    className="remove-button"
-                                                    onClick={() => handleDelete(product.id)}
-                                                    disabled={updatingQuantities[product.id]}
-                                                >
-                                                    <Trash2 className="icon-sm" />
-                                                    <span>Xóa</span>
-                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="divider"></div>
-                                </React.Fragment>
-                            ))}
+
+                                        <div className="divider"></div>
+                                    </React.Fragment>
+                                );
+                            })}
 
                             {showPagination && (
                                 <div className="pagination-container">
@@ -473,6 +548,7 @@ const CartPage = () => {
                                 </div>
                             )}
                         </div>
+
                         <div className="card-footer">
                             <button className="secondary-button" onClick={handleContinueShopping}>
                                 <ShoppingBag className="icon" />
@@ -498,6 +574,7 @@ const CartPage = () => {
                                 <Tag color="blue">{selectedProducts.length} sản phẩm</Tag>
                             )}
                         </div>
+
                         <div className="card-content">
                             <div className="discount-code-section">
                                 <div className="discount-input-group">
@@ -525,6 +602,7 @@ const CartPage = () => {
                                         </Button>
                                     )}
                                 </div>
+
                                 {appliedVoucher && (
                                     <div className="applied-discount">
                                         <span>

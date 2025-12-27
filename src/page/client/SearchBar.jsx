@@ -128,7 +128,7 @@ const SearchBar = () => {
                                     {results.slice(0, 3).map((product) => (
                                         <div
                                             key={product.id}
-                                            className="preview-item"
+                                            className="preview-item preview-item-modern"
                                             onClick={() => handleProductClick(product.id)}
                                         >
                                             {product.productVariant.imageUrl && (
@@ -141,18 +141,22 @@ const SearchBar = () => {
                                                 />
                                             )}
                                             <div className="preview-info">
-                                                <h4>{product.product.name}</h4>
-                                                <p className="text-sm">
-                                                    {`${product.cpu}, ${product.gpu}, ${product.ram}, ${product.storage}`}
+                                                <h4 className="product-name">
+                                                    {product.product.name}
+                                                </h4>
+
+                                                <p className="product-spec">
+                                                    {product.cpu} · {product.ram} · {product.storage}
                                                 </p>
 
-                                                <p className="text-primary">
-                                                    {new Intl.NumberFormat('vi-VN', {
-                                                        style: 'currency',
-                                                        currency: 'VND'
+                                                <p className="product-price">
+                                                    {new Intl.NumberFormat("vi-VN", {
+                                                    style: "currency",
+                                                    currency: "VND"
                                                     }).format(product.price || 0)}
                                                 </p>
                                             </div>
+
                                         </div>
                                     ))}
                                 </div>

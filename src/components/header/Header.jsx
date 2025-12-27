@@ -12,6 +12,7 @@ import {
     Key,
     History,
     HistoryIcon,
+    LayoutDashboard,
 } from 'lucide-react';
 import './Header.css';
 import logo from '../../assets/logo.jpg';
@@ -136,12 +137,12 @@ const Header = () => {
             <Menu.Item key="orders" icon={<History />} onClick={() => navigate(`/history/${userData.id}`)}>
                 Lịch sử mua hàng
             </Menu.Item>
-            <Menu.Item key="wallet" icon={<MoneyCollectOutlined style={{ fontSize: 20 }} />} onClick={() => navigate(`/wallet/${userData.id}`)}>
+            {/* <Menu.Item key="wallet" icon={<MoneyCollectOutlined style={{ fontSize: 20 }} />} onClick={() => navigate(`/wallet/${userData.id}`)}>
                 Rút tiền từ ví
-            </Menu.Item>
-            <Menu.Item key="wallet-history" icon={<HistoryIcon />} onClick={() => navigate(`/wallet-history/${userData.id}`)}>
+            </Menu.Item> */}
+            {/* <Menu.Item key="wallet-history" icon={<HistoryIcon />} onClick={() => navigate(`/wallet-history/${userData.id}`)}>
                 Lịch sử rút tiền
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="change-password" icon={<Key />} onClick={toggleChangePasswordModal}>
                 Đổi mật khẩu
             </Menu.Item>
@@ -245,7 +246,7 @@ const Header = () => {
                             </Badge>
                         </Button>
 
-                        {userData?.role === "ADMIN" && ( <Button type="text" className="header-icon" onClick={() => navigate("/admin/dashboard")} > <Key className="icon" /> </Button> )}
+                        {userData?.role === "ADMIN" && ( <Button type="text" className="header-icon" onClick={() => navigate("/admin/dashboard")} > <LayoutDashboard className="icon" /> </Button> )}
                     </div>
                 </div>
             </header>

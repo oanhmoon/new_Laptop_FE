@@ -338,10 +338,15 @@ const CategoryManagement = () => {
       theme={{
         components: {
           Table: {
-            headerBg: '#1890ff',
+            headerBg: '#01060cff',
             headerColor: 'white',
           },
         },
+        token: {
+          colorPrimary: '#000000',      
+          colorBorderHover: '#000000',
+          fontFamily: "'Montserrat', 'Roboto', sans-serif",
+        }
       }}
     >
     <div style={{ padding: 24, background: '#fff'}}>

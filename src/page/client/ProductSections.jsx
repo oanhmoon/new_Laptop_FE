@@ -43,16 +43,17 @@ const ProductSections = () => {
         );
     };
 
-    // Render product name with full specs
+    
     const renderProductName = (product) => {
+        const productName =
+            product.product?.name ||   
+            product.name || "";        
+
         const specs = [
-            product.name,
-            product.code,
-            product.cpu,
-            product.ram,
-            product.storage,
-            product.gpu
-        ].filter(Boolean).join(' ');
+            productName,
+            product.code
+            
+        ].filter(Boolean).join(" ");
 
         return specs;
     };
@@ -131,8 +132,8 @@ const ProductSections = () => {
                     ) : error ? (
                         <div className="error-container-home-screen">{error}</div>
                     ) : (
-                        <div className="products-grid-home-screen">
-                            {featureProducts.slice(0, 4).map((product) => (
+                        <div className="products-scroll-home-screen">
+                            {featureProducts.map((product) => (
                                 <Card key={product.id} className="product-card-home-screen"
                                       onClick={() => window.location.href = `/products/${product.id}`}
                                 >
@@ -199,107 +200,12 @@ const ProductSections = () => {
                 </div>
             </section>
 
-            {/* Flash Sale Section
-            <section className="flash-sale-section">
-                <div className="container">
-                    <div className="section-header">
-                        <div className="title-wrapper">
-                            <Zap className="flash-icon" size={20} />
-                            <h2 className="section-title-home">Flash Sale</h2>
-                        </div>
-                        <div className="countdown-timer">
-                            <Clock className="timer-icon" size={16} />
-                            <span>Kết thúc sau:</span>
-                            <span className="time-remaining">{timeRemaining}</span>
-                        </div>
-                    </div>
-
-                    {loading.flashSale ? (
-                        <div className="loading-container-home-screen">Đang tải sản phẩm flash sale...</div>
-                    ) : error ? (
-                        <div className="error-container-home-screen">{error}</div>
-                    ) : (
-                        <div className="products-grid-home-screen">
-                            {flashSaleProducts.slice(0, 4).map((product) => (
-                                <Card key={product.id} className="product-card-home-screen"
-                                      onClick={() => window.location.href = `/products/${product.id}`}
-                                >
-                                    <div className="image-container-home-screen">
-                                        {product.discountPercentage && (
-                                            <Badge.Ribbon
-                                                text={`-${Math.round(product.discountPercentage)}%`}
-                                                color="#ff4d4f"
-                                                className="discount-badge-home-screen"
-                                            >
-                                                <Image
-                                                    src={product.productVariant?.imageUrl || '/products/default-laptop.jpg'}
-                                                    preview={false}
-                                                    alt={product.name}
-                                                    className="product-image-home-screen"
-                                                    onError={(e) => {
-                                                        e.target.src = '/products/default-laptop.jpg';
-                                                        e.target.onerror = null;
-                                                    }}
-                                                />
-                                            </Badge.Ribbon>
-                                        )}
-                                        {!product.discountPercentage && (
-                                            <Image
-                                                src={product.productVariant?.imageUrl || '/products/default-laptop.jpg'}
-                                                preview={false}
-                                                alt={product.name}
-                                                className="product-image-home-screen"
-                                                onError={(e) => {
-                                                    e.target.src = '/products/default-laptop.jpg';
-                                                    e.target.onerror = null;
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="product-content-home-screen">
-                                        <h3 className="product-name-home-screen">
-                                            {renderProductName(product)}
-                                        </h3>
-                                        {renderSpecTags(product)}
-                                        <div className="price-container-home-screen">
-                                            <span className="current-price-home-screen">
-                                                {formatPrice(product.price || 0)}
-                                            </span>
-                                            <span className="old-price-home-screen">
-                                                {formatPrice(product.price * 1.1)}
-                                            </span>
-                                        </div>
-                                        <div className="rating-container-home-screen">
-                                            <div className="rating-home-screen">
-                                                <Star className="star-icon-home-screen" size={14} />
-                                                <span>{product.ratingAverage?.toFixed(1) || '5.0'}</span>
-                                            </div>
-                                            <span className="divider-home-screen">|</span>
-                                            <span className="sold">Đã bán {product.salesCount || 0}+</span>
-                                        </div>
-                                    </div>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="view-all-container-home-screen">
-                        <Button
-                            type="primary"
-                            className="view-all-button-home-screen"
-                            onClick={() => window.location.href = '/flash-sale'}
-                        >
-                            Xem tất cả
-                        </Button>
-                    </div>
-                </div>
-            </section> */}
 
             {/* Sản phẩm nổi bật */}
             <section className="featured-products-section">
                 <div className="container">
                     <div className="tabs-header">
-                        <h2 className="section-title">Sản Phẩm Nổi Bật 1</h2>
+                        <h2 className="section-title">Sản Phẩm Nổi Bật </h2>
                     </div>
                     <div className="products-grid-home-screen">
                         {bestsellerProducts.slice(0, 8).map((product) => (
@@ -339,9 +245,7 @@ const ProductSections = () => {
                                         <span className="current-price-home-screen">
                                             {formatPrice(product?.price || 0)}
                                         </span>
-                                        {/* <span className="old-price-home-screen">
-                                            {formatPrice(product.price * 1.1)}
-                                        </span> */}
+                                        
                                     </div>
                                     <div className="rating-container-home-screen">
                                         <div className="rating-home-screen">

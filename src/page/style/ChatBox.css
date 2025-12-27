@@ -1,8 +1,8 @@
 .chat-box-container {
     position: fixed;
-    bottom: 20px;
+    bottom: 160px;
     right: 20px;
-    width: 350px;
+    width: 450px;
     max-height: 500px;
     display: none;
     flex-direction: column;

@@ -10,6 +10,8 @@ import './footer.css';
 import {Button, Image} from "antd";
 import {Link} from "react-router-dom";
 import logo from "../../assets/logo.png";
+import TermsService from "../../page/client/TermsService";
+
 const Footer = () => {
     return (
         <footer className="site-footer">
@@ -52,9 +54,7 @@ const Footer = () => {
                         <h3 className="section-title-footer">Thông tin</h3>
                         <ul className="footer-links">
                             <li><Link href="#" className="footer-link">Giới thiệu</Link></li>
-                            <li><Link href="#" className="footer-link">Tin tức</Link></li>
-                            {/* <li><Link href="#" className="footer-link">Khuyến mãi</Link></li> */}
-                            
+                            <li><Link href="#" className="footer-link">Tin tức</Link></li>                       
                             <li><Link href="#" className="footer-link">Liên hệ</Link></li>
                         </ul>
                     </div>
@@ -63,11 +63,16 @@ const Footer = () => {
                     <div className="footer-section">
                         <h3 className="section-title-footer">Chính sách</h3>
                         <ul className="footer-links">
-                            <li><Link href="#" className="footer-link">Chính sách bảo hành</Link></li>
-                            {/* <li><Link href="#" className="footer-link">Chính sách thanh toán</Link></li>
-                            <li><Link href="#" className="footer-link">Chính sách giao hàng</Link></li> */}
-                            <li><Link href="#" className="footer-link">Chính sách bảo mật</Link></li>
-                            <li><Link href="#" className="footer-link">Điều khoản dịch vụ</Link></li>
+                            <Link to="/chinh-sach-bao-hanh" className="footer-link">
+                                Chính sách bảo hành
+                            </Link>
+                            <Link to="/chinh-sach-bao-mat" className="footer-link">
+                                Chính sách bảo mật
+                            </Link>
+                            <Link to="/dieu-khoan-dich-vu" className="footer-link">
+                                Điều khoản dịch vụ
+                            </Link>
+
                         </ul>
                     </div>
 
