@@ -58,7 +58,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onSwitchToForgotPassw
 
       if (result?.error) throw new Error(result.error.message || "Đăng nhập thất bại");
 
-      if (localStorage.getItem("accessToken")) {
+      if (result?.success) {
         onClose();
       } else {
         throw new Error("Không nhận được token đăng nhập");

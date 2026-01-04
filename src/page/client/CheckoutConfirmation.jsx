@@ -134,18 +134,30 @@ const CheckoutConfirmation = () => {
             };
 
             console.log("Submitting order:", orderData);
-            const balanceRes = await dispatch(getUserBalance(userData?.id));
-            if (balanceRes.code !== 200) {
-                throw new Error('Failed to check user balance');
+            // const balanceRes = await dispatch(getUserBalance(userData?.id));
+            // if (balanceRes.code !== 200) {
+            //     throw new Error('Failed to check user balance');
+            // }
+
+            // if (balanceRes.data < total && formData.paymentMethod === 'IN_APP') {
+            //     notification.error({
+            //         message: 'Số dư không đủ',
+            //         description: 'Tài khoản của bạn không đủ số dư để thanh toán. Vui lòng chọn phương thức thanh toán khác.',
+            //     });
+            //     return;
+            // }
+            if (formData.paymentMethod === 'IN_APP') {
+                const balance = await dispatch(getUserBalance(userData?.id));
+
+                if (balance < total) {
+                    notification.error({
+                        message: 'Số dư không đủ',
+                        description: 'Tài khoản của bạn không đủ số dư để thanh toán.',
+                    });
+                    return;
+                }
             }
 
-            if (balanceRes.data < total && formData.paymentMethod === 'IN_APP') {
-                notification.error({
-                    message: 'Số dư không đủ',
-                    description: 'Tài khoản của bạn không đủ số dư để thanh toán. Vui lòng chọn phương thức thanh toán khác.',
-                });
-                return;
-            }
 
             const res = await dispatch(insertOrder(orderData));
 

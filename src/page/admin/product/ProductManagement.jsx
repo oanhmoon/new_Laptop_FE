@@ -138,12 +138,6 @@ const ProductManagement = () => {
     setCurrentPage(1);
   };
 
-
-  // const showViewModal = (product) => {
-  //   setCurrentProduct(product);
-  //   setPreviewImages(product.images || []);
-  //   setIsViewModalVisible(true);
-  // };
   const showViewModal = (product) => {
   setCurrentProduct(product);
 
@@ -227,38 +221,7 @@ const ProductManagement = () => {
       align: 'center',
       render: (_, __, index) => (currentPage - 1) * pageSize + index + 1,
     },
-    // {
-    //   title: 'Ảnh',
-    //   dataIndex: 'images',
-    //   key: 'image',
-    //   width: 100,
-    //   render: (images) => (
-    //     images && images.length > 0 ? (
-    //       <Image 
-    //         src={images[0].url} 
-    //         alt="Product"
-    //         width={70}
-    //         height={70}
-    //         style={{ objectFit: 'contain' }}
-    //         preview={false}
-    //         onClick={(e) => {
-    //           e.stopPropagation();
-    //         }}
-    //       />
-    //     ) : (
-    //       <div style={{ 
-    //         width: 70, 
-    //         height: 70, 
-    //         background: '#f0f0f0', 
-    //         display: 'flex', 
-    //         alignItems: 'center', 
-    //         justifyContent: 'center' 
-    //       }}>
-    //         <PictureOutlined style={{ fontSize: 24, color: '#999' }} />
-    //       </div>
-    //     )
-    //   ),
-    // },
+    
     {
   title: "Ảnh",
   key: "image",

@@ -48,9 +48,9 @@ const DashboardPage = () => {
           // Transform API data to match our format
           const transformedData = response.map(item => ({
             month: monthNames[item.month - 1],
-            revenue: item.totalRevenue,
+            revenue: item.revenue,
             customers: item.customers,
-            laptops: item.laptops
+            products: item.products
           }));
           setMonthlyData(transformedData);
         }
@@ -68,7 +68,7 @@ const DashboardPage = () => {
   // Calculate totals from API data
   const totalRevenue = monthlyData.reduce((sum, item) => sum + (item.revenue || 0), 0);
   const totalCustomers = monthlyData.reduce((sum, item) => sum + (item.customers || 0), 0);
-  const totalLaptops = monthlyData.reduce((sum, item) => sum + (item.laptops || 0), 0);
+  const totalLaptops = monthlyData.reduce((sum, item) => sum + (item.products || 0), 0);
 
   // Calculate growth (using previous year as comparison)
   const revenueGrowth = monthlyData.length > 0 ?
@@ -76,7 +76,7 @@ const DashboardPage = () => {
   const customerGrowth = monthlyData.length > 0 ?
       ((monthlyData[monthlyData.length - 1].customers - monthlyData[0].customers) / monthlyData[0].customers) * 100 : 0;
   const laptopGrowth = monthlyData.length > 0 ?
-      ((monthlyData[monthlyData.length - 1].laptops - monthlyData[0].laptops) / monthlyData[0].laptops) * 100 : 0;
+      ((monthlyData[monthlyData.length - 1].products - monthlyData[0].products) / monthlyData[0].products) * 100 : 0;
 
   // Export to Excel function
   const exportToExcel = () => {
@@ -86,7 +86,7 @@ const DashboardPage = () => {
         'Tháng': item.month,
         'Doanh Thu (VND)': item.revenue,
         'Số Khách Hàng': item.customers,
-        'Số Sản Phẩm': item.laptops
+        'Số Sản Phẩm': item.products
       }));
 
       // Add summary row
@@ -125,7 +125,7 @@ const DashboardPage = () => {
   const yearMenu = (
       <Menu>
         <Menu.ItemGroup title="Chọn Năm">
-          {[2023, 2024, 2025].map(year => (
+          {[2023, 2024, 2025, 2026].map(year => (
               <Menu.Item
                   key={year}
                   onClick={() => setSelectedYear(year.toString())}
@@ -160,8 +160,8 @@ const DashboardPage = () => {
     },
     {
       title: 'Số Sản Phẩm',
-      dataIndex: 'laptops',
-      key: 'laptops',
+      dataIndex: 'products',
+      key: 'products',
       align: 'right',
       render: (value) => value || 0,
     },
@@ -359,7 +359,7 @@ const DashboardPage = () => {
                           <YAxis />
                           <Tooltip content={<CustomTooltip />} />
                           <Bar
-                              dataKey="laptops"
+                              dataKey="products"
                               fill="#faad14"
                               radius={4}
                               name="Sản Phẩm"

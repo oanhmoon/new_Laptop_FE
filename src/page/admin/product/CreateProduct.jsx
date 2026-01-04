@@ -96,12 +96,28 @@ const BasicInfoStep = ({ form, onNext, initialValues }) => {
   ];
 
   return (
+    // <Form
+    //   form={form}
+    //   layout="vertical"
+    //   initialValues={initialValues}
+    //   onFinish={(values) => onNext(values)} // do not include images here
+    // >
     <Form
       form={form}
       layout="vertical"
       initialValues={initialValues}
-      onFinish={(values) => onNext(values)} // do not include images here
+      onFinish={(values) => {
+        const category = categories.find(c => c.id === values.categoryId);
+        const brand = brands.find(b => b.id === values.brandId);
+
+        onNext({
+          ...values,
+          categoryName: category?.name,
+          brandName: brand?.name,
+        });
+      }}
     >
+
       <Card title="Thông tin cơ bản" bordered={false}>
         <Form.Item
           name="name"
@@ -917,89 +933,211 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
   const notification = useContext(NotificationContext);
   const navigate = useNavigate();
 
+  // const handleSubmit = async () => {
+  //   setLoading(true);
+
+  //   try {
+  //     const formDataObj = new FormData();
+
+  //     // Basic info
+  //     formDataObj.append("name", formData.basicInfo.name);
+  //     formDataObj.append("description", formData.basicInfo.description || "");
+  //     formDataObj.append("categoryId", formData.basicInfo.categoryId);
+  //     formDataObj.append("brandId", formData.basicInfo.brandId);
+
+  //     // --------------------------
+  //     // OPTION IMAGES (gallery)
+  //     // --------------------------
+  //     formData.options.forEach((opt, opIndex) => {
+  //       const base = `options[${opIndex}]`;
+
+  //       formDataObj.append(`${base}.code`, opt.code);
+  //       formDataObj.append(`${base}.price`, opt.price);
+
+  //       // Append all images for each option
+  //       if (opt.images) {
+  //         opt.images.forEach(img => {
+  //           if (img.originFileObj) {
+  //             formDataObj.append(`${base}.images`, img.originFileObj);
+  //           }
+  //         });
+  //       }
+
+  //       // Technical specs
+  //       formDataObj.append(`${base}.cpu`, opt.cpu || '');
+  //       formDataObj.append(`${base}.gpu`, opt.gpu || '');
+  //       formDataObj.append(`${base}.ram`, opt.ram || '');
+  //       formDataObj.append(`${base}.ramType`, opt.ramType || '');
+  //       formDataObj.append(`${base}.ramSlot`, opt.ramSlot || '');
+  //       formDataObj.append(`${base}.storage`, opt.storage || '');
+  //       formDataObj.append(`${base}.storageUpgrade`, opt.storageUpgrade || '');
+  //       formDataObj.append(`${base}.displaySize`, opt.displaySize || '');
+  //       formDataObj.append(`${base}.displayResolution`, opt.displayResolution || '');
+  //       formDataObj.append(`${base}.displayRefreshRate`, opt.displayRefreshRate || '');
+  //       formDataObj.append(`${base}.displayTechnology`, opt.displayTechnology || '');
+  //       formDataObj.append(`${base}.audioFeatures`, opt.audioFeatures || '');
+  //       formDataObj.append(`${base}.webcam`, opt.webcam || '');
+  //       formDataObj.append(`${base}.keyboard`, opt.keyboard || '');
+  //       formDataObj.append(`${base}.security`, opt.security || '');
+  //       formDataObj.append(`${base}.os`, opt.os || '');
+  //       formDataObj.append(`${base}.weight`, opt.weight || '');
+  //       formDataObj.append(`${base}.battery`, opt.battery || '');
+  //       formDataObj.append(`${base}.dimension`, opt.dimension || '');
+  //       formDataObj.append(`${base}.wifi`, opt.wifi || '');
+  //       formDataObj.append(`${base}.bluetooth`, opt.bluetooth || '');
+  //       formDataObj.append(`${base}.ports`, opt.ports || '');
+  //       formDataObj.append(`${base}.specialFeatures`, opt.specialFeatures || '');
+
+  //       // Add variants
+  //       const optionVariants = formData.variants[opIndex] || [];
+  //       optionVariants.forEach((variant, vIndex) => {
+  //         const vBase = `${base}.variants[${vIndex}]`;
+  //         formDataObj.append(`${vBase}.color`, variant.color);
+  //         formDataObj.append(`${vBase}.priceDiff`, variant.priceDiff || 0);
+  //         formDataObj.append(`${vBase}.stock`, variant.stock);
+
+  //         // Variant 1 IMAGE
+  //         if (variant.image && variant.image[0] && variant.image[0].originFileObj) {
+  //           formDataObj.append(`${vBase}.image`, variant.image[0].originFileObj);
+  //         }
+  //       });
+  //     });
+
+  //     //const response = await dispatch(adminCreateProduct(formDataObj));
+
+  //     // if (response === 201) {
+  //     //   notification.success({ message: 'Thành công', description: 'Thêm sản phẩm thành công!' });
+  //     //   //onSubmit();
+  //     //   navigate('/admin/laptops');
+  //     // } else {
+  //     //   notification.error({ message: 'Lỗi', description: 'Thêm sản phẩm thất bại!' });
+  //     // }
+      
+  //       const status = await dispatch(adminCreateProduct(formDataObj));
+  //       if (status === 201) {
+  //         notification.success({ message: 'Thành công', description: 'Thêm sản phẩm thành công!' });
+  //         navigate('/admin/laptops');
+  //       }
+  //   }
+  //      catch (error) {
+  //       if (error?.response?.status === 409) {
+  //         notification.error({
+  //           message: 'Lỗi trùng dữ liệu',
+  //           description: error.response.data.message
+  //         });
+  //       } else {
+  //         notification.error({
+  //           message: 'Lỗi',
+  //           description: 'Có lỗi xảy ra khi thêm sản phẩm'
+  //         });
+  //       }
+      
+
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleSubmit = async () => {
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const formDataObj = new FormData();
+  try {
+    const formDataObj = new FormData();
 
-      // Basic info
-      formDataObj.append("name", formData.basicInfo.name);
-      formDataObj.append("description", formData.basicInfo.description || "");
-      formDataObj.append("categoryId", formData.basicInfo.categoryId);
-      formDataObj.append("brandId", formData.basicInfo.brandId);
+    // ===== Basic info =====
+    formDataObj.append("name", formData.basicInfo.name);
+    formDataObj.append("description", formData.basicInfo.description || "");
+    formDataObj.append("categoryId", formData.basicInfo.categoryId);
+    formDataObj.append("brandId", formData.basicInfo.brandId);
 
-      // --------------------------
-      // OPTION IMAGES (gallery)
-      // --------------------------
-      formData.options.forEach((opt, opIndex) => {
-        const base = `options[${opIndex}]`;
+    // ===== Options =====
+    formData.options.forEach((opt, opIndex) => {
+      const base = `options[${opIndex}]`;
 
-        formDataObj.append(`${base}.code`, opt.code);
-        formDataObj.append(`${base}.price`, opt.price);
+      formDataObj.append(`${base}.code`, opt.code);
+      formDataObj.append(`${base}.price`, opt.price);
 
-        // Append all images for each option
-        if (opt.images) {
-          opt.images.forEach(img => {
-            if (img.originFileObj) {
-              formDataObj.append(`${base}.images`, img.originFileObj);
-            }
-          });
+      // Images
+      opt.images?.forEach(img => {
+        if (img.originFileObj) {
+          formDataObj.append(`${base}.images`, img.originFileObj);
         }
-
-        // Technical specs
-        formDataObj.append(`${base}.cpu`, opt.cpu || '');
-        formDataObj.append(`${base}.gpu`, opt.gpu || '');
-        formDataObj.append(`${base}.ram`, opt.ram || '');
-        formDataObj.append(`${base}.ramType`, opt.ramType || '');
-        formDataObj.append(`${base}.ramSlot`, opt.ramSlot || '');
-        formDataObj.append(`${base}.storage`, opt.storage || '');
-        formDataObj.append(`${base}.storageUpgrade`, opt.storageUpgrade || '');
-        formDataObj.append(`${base}.displaySize`, opt.displaySize || '');
-        formDataObj.append(`${base}.displayResolution`, opt.displayResolution || '');
-        formDataObj.append(`${base}.displayRefreshRate`, opt.displayRefreshRate || '');
-        formDataObj.append(`${base}.displayTechnology`, opt.displayTechnology || '');
-        formDataObj.append(`${base}.audioFeatures`, opt.audioFeatures || '');
-        formDataObj.append(`${base}.webcam`, opt.webcam || '');
-        formDataObj.append(`${base}.keyboard`, opt.keyboard || '');
-        formDataObj.append(`${base}.security`, opt.security || '');
-        formDataObj.append(`${base}.os`, opt.os || '');
-        formDataObj.append(`${base}.weight`, opt.weight || '');
-        formDataObj.append(`${base}.battery`, opt.battery || '');
-        formDataObj.append(`${base}.dimension`, opt.dimension || '');
-        formDataObj.append(`${base}.wifi`, opt.wifi || '');
-        formDataObj.append(`${base}.bluetooth`, opt.bluetooth || '');
-        formDataObj.append(`${base}.ports`, opt.ports || '');
-        formDataObj.append(`${base}.specialFeatures`, opt.specialFeatures || '');
-
-        // Add variants
-        const optionVariants = formData.variants[opIndex] || [];
-        optionVariants.forEach((variant, vIndex) => {
-          const vBase = `${base}.variants[${vIndex}]`;
-          formDataObj.append(`${vBase}.color`, variant.color);
-          formDataObj.append(`${vBase}.priceDiff`, variant.priceDiff || 0);
-          formDataObj.append(`${vBase}.stock`, variant.stock);
-
-          // Variant 1 IMAGE
-          if (variant.image && variant.image[0] && variant.image[0].originFileObj) {
-            formDataObj.append(`${vBase}.image`, variant.image[0].originFileObj);
-          }
-        });
       });
 
-      const response = await dispatch(adminCreateProduct(formDataObj));
+      // Specs
+      formDataObj.append(`${base}.cpu`, opt.cpu || "");
+      formDataObj.append(`${base}.gpu`, opt.gpu || "");
+      formDataObj.append(`${base}.ram`, opt.ram || "");
+      formDataObj.append(`${base}.ramType`, opt.ramType || "");
+      formDataObj.append(`${base}.ramSlot`, opt.ramSlot || "");
+      formDataObj.append(`${base}.storage`, opt.storage || "");
+      formDataObj.append(`${base}.storageUpgrade`, opt.storageUpgrade || "");
+      formDataObj.append(`${base}.displaySize`, opt.displaySize || "");
+      formDataObj.append(`${base}.displayResolution`, opt.displayResolution || "");
+      formDataObj.append(`${base}.displayRefreshRate`, opt.displayRefreshRate || "");
+      formDataObj.append(`${base}.displayTechnology`, opt.displayTechnology || "");
+      formDataObj.append(`${base}.audioFeatures`, opt.audioFeatures || "");
+      formDataObj.append(`${base}.webcam`, opt.webcam || "");
+      formDataObj.append(`${base}.keyboard`, opt.keyboard || "");
+      formDataObj.append(`${base}.security`, opt.security || "");
+      formDataObj.append(`${base}.os`, opt.os || "");
+      formDataObj.append(`${base}.weight`, opt.weight || "");
+      formDataObj.append(`${base}.battery`, opt.battery || "");
+      formDataObj.append(`${base}.dimension`, opt.dimension || "");
+      formDataObj.append(`${base}.wifi`, opt.wifi || "");
+      formDataObj.append(`${base}.bluetooth`, opt.bluetooth || "");
+      formDataObj.append(`${base}.ports`, opt.ports || "");
+      formDataObj.append(`${base}.specialFeatures`, opt.specialFeatures || "");
 
-      if (response === 201) {
-        notification.success({ message: 'Thành công', description: 'Thêm sản phẩm thành công!' });
-        //onSubmit();
-        navigate('/admin/laptops');
-      } else {
-        notification.error({ message: 'Lỗi', description: 'Thêm sản phẩm thất bại!' });
-      }
-    } finally {
-      setLoading(false);
+      // Variants
+      const variants = formData.variants[opIndex] || [];
+      variants.forEach((variant, vIndex) => {
+        const vBase = `${base}.variants[${vIndex}]`;
+        formDataObj.append(`${vBase}.color`, variant.color);
+        formDataObj.append(`${vBase}.priceDiff`, variant.priceDiff || 0);
+        formDataObj.append(`${vBase}.stock`, variant.stock);
+
+        if (variant.image?.[0]?.originFileObj) {
+          formDataObj.append(`${vBase}.image`, variant.image[0].originFileObj);
+        }
+      });
+    });
+
+    // ===== CALL API =====
+    const res = await dispatch(adminCreateProduct(formDataObj));
+    console.log("CREATED PRODUCT:", res);
+
+    // ✅ THÀNH CÔNG: có product.id
+    if (res?.code === 201 && res?.data?.id) {
+      notification.success({
+        message: "Thành công",
+        description: "Thêm sản phẩm thành công!"
+      });
+      navigate("/admin/laptops");
+    } else {
+      notification.error({
+        message: "Lỗi",
+        description: "Thêm sản phẩm thất bại"
+      });
     }
-  };
+
+  } catch (error) {
+    if (error?.response?.status === 409) {
+      notification.error({
+        message: "Lỗi trùng dữ liệu",
+        description: error.response.data.message
+      });
+    } else {
+      notification.error({
+        message: "Lỗi",
+        description: "Có lỗi xảy ra khi thêm sản phẩm"
+      });
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   return (
     <>
@@ -1008,8 +1146,8 @@ const ReviewStep = ({ formData, onSubmit, onBack }) => {
           <Descriptions.Item label="Tên sản phẩm">
             {formData.basicInfo.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Danh mục">{formData.basicInfo.categoryId}</Descriptions.Item>
-          <Descriptions.Item label="Thương hiệu">{formData.basicInfo.brandId}</Descriptions.Item>
+          <Descriptions.Item label="Danh mục">{formData.basicInfo.categoryName}</Descriptions.Item>
+          <Descriptions.Item label="Thương hiệu">{formData.basicInfo.brandName}</Descriptions.Item>
           <Descriptions.Item label="Mô tả" span={2}>
             <div dangerouslySetInnerHTML={{ __html: formData.basicInfo.description }} />
           </Descriptions.Item>

@@ -180,7 +180,7 @@ const PurchaseHistory = () => {
         className: "status-badge refunded",
       },
       CONFIRMED_RETURNED: {
-        label: "Đã xác nhận hoàn hàng",
+        label: "Đã xác nhận, yêu cầu gửi hàng hoàn",
         className: "status-badge refunded",
       },
       SHIPPED_RETURNED: {
@@ -412,7 +412,7 @@ const PurchaseHistory = () => {
                       <div className="refund-media-grid">
 
                     <div className="refund-media-item">
-                      <strong>Ảnh khách gửi:</strong>
+                      <strong>Ảnh minh chứng:</strong>
                       {order.refundImageUrl ? (
                         <img src={order.refundImageUrl} className="refund-image" />
                       ) : (
@@ -421,7 +421,7 @@ const PurchaseHistory = () => {
                     </div>
 
                     <div className="refund-media-item">
-                      <strong>Video khách gửi:</strong>
+                      <strong>Video minh chứng:</strong>
                       {order.refundVideoUrl ? (
                         <video src={order.refundVideoUrl} controls className="refund-video" />
                       ) : (

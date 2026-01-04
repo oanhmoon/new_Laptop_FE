@@ -8,9 +8,15 @@ export class UserService extends baseService {
     // register = (username,password,fullName,email) => {
     //     return this.post('api/v1/auth/register',{username,email,password,fullName})
     // }
-    requestRegisterOtp = (email) => {
-        return this.post("api/v1/auth/register/request-otp", { email });
+    // requestRegisterOtp = (email) => {
+    //     return this.post("api/v1/auth/register/request-otp", { email });
+    // };
+    requestRegisterOtp = (registerData) => {
+        return this.post("api/v1/auth/register/request-otp", registerData);
     };
+
+    
+
 
     verifyRegisterOtp = (email, otp) => {
         return this.post("api/v1/auth/register/verify-otp", { email, otp });

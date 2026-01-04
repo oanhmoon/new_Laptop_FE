@@ -37,9 +37,18 @@ const VoucherPage = () => {
         const fetchVouchers = async () => {
             try {
                 setLoading(true);
-                const response = await dispatch(getAllVoucher(null, null, null, null, null, currentPage, pageSize, null, null));
+                const response = await dispatch(
+                    getAllVoucher(null, null, null, null, null, currentPage, pageSize, null, null)
+                );
+
                 if (response && response.content) {
-                    setVouchers(response.content);
+                    const now = dayjs();
+
+                    const validVouchers = response.content.filter(voucher =>
+                        dayjs(voucher.endDate).isAfter(now) && voucher.quantity > 0
+                    );
+
+                    setVouchers(validVouchers);
                 } else {
                     messageApi.warning("Không có mã giảm giá nào");
                 }
@@ -52,7 +61,8 @@ const VoucherPage = () => {
         };
 
         fetchVouchers();
-    }, [dispatch, messageApi]);
+    }, [dispatch, currentPage]);
+
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat("vi-VN", {
@@ -118,16 +128,16 @@ const VoucherPage = () => {
                                             className={`voucher-card ${
                                                 isExpired ? "expired" : isExpiringSoon ? "expiring" : "active"
                                             }`}
-                                            cover={
-                                                <div className="voucher-header-strip">
-                                                    {isPopular && (
-                                                        <div className="popular-tag">
-                                                            <FireOutlined /> Phổ biến
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            }
-                                            hoverable
+                                            // cover={
+                                            //     <div className="voucher-header-strip">
+                                            //         {isPopular && (
+                                            //             <div className="popular-tag">
+                                            //                 <FireOutlined /> Phổ biến
+                                            //             </div>
+                                            //         )}
+                                            //     </div>
+                                            // }
+                                            // hoverable
                                         >
                                             <div className="voucher-card-content">
                                                 <Meta

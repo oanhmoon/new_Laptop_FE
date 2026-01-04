@@ -132,7 +132,7 @@ const LaptopGrid = () => {
                     {showFilters ? 'Đóng bộ lọc' : 'Bộ lọc'}
                 </button>
 
-                <div className="search-box">
+                {/* <div className="search-box">
                     <FiSearch className="search-icon" onClick={handleSearch} />
                     <input
                         type="text"
@@ -141,7 +141,7 @@ const LaptopGrid = () => {
                         onChange={(e) => setSearchKeyword(e.target.value)}
                         onKeyPress={handleSearch}
                     />
-                </div>
+                </div> */}
             </div>
 
             <div className="store-content">
@@ -304,11 +304,11 @@ const LaptopGrid = () => {
                                 <div className="sort-options">
                                     <label>Sắp xếp:</label>
                                     <select value={sortOption} onChange={handleSortChange}>
-                                        <option value="name,asc">Tên A-Z</option>
-                                        <option value="name,desc">Tên Z-A</option>
+                                        <option value="name,asc">Mặc định</option>
+                                        {/* <option value="name,desc">Tên Z-A</option> */}
                                         <option value="price,asc">Giá tăng dần</option>
                                         <option value="price,desc">Giá giảm dần</option>
-                                        <option value="rating,desc">Đánh giá cao</option>
+                                        {/* <option value="rating,desc">Đánh giá cao</option> */}
                                         <option value="createdAt,desc">Mới nhất</option>
                                     </select>
                                 </div>

@@ -365,7 +365,7 @@ const OrderManagement = () => {
     doc.setFontSize(11);
     doc.text(`Họ tên: ${order.user?.fullName || "N/A"}`, 15, 85);
     doc.text(`Email: ${order.user?.email || "N/A"}`, 15, 90);
-    doc.text(`Điện thoại: ${order.user?.phoneNumber || "N/A"}`, 15, 95);
+    
 
     let currentY = 105;
     doc.setFontSize(12);
@@ -415,11 +415,11 @@ const OrderManagement = () => {
   styles: { 
     cellPadding: 3, 
     fontSize: 10,
-    font: "TimesNewRoman",      // ⬅⬅ bắt buộc
-    fontStyle: "normal"         // ⬅⬅ nếu cần bold thì set theo từng cột
+    font: "TimesNewRoman",     
+    fontStyle: "normal"         
   },
   headStyles: {
-    font: "TimesNewRoman",      // ⬅ áp dụng font cho header
+    font: "TimesNewRoman",      
     fontStyle: "bold"
   },
   margin: { left: 15, right: 15 }
@@ -429,18 +429,34 @@ const OrderManagement = () => {
     const finalY = (doc.lastAutoTable?.finalY || tableStartY + 5) + 15;
     const subtotal = order.orderItems.reduce((t, it) => t + it.priceAtOrderTime * it.quantity, 0);
     const discountAmount = order.discount ? calculateDiscountAmount(order) : 0;
-    const total = subtotal - discountAmount;
+    //const total = subtotal - discountAmount;
+    
+
 
     doc.setFontSize(11);
     doc.text("Tổng tiền sản phẩm:", 20, finalY);
-    doc.text(`${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(subtotal)} VNĐ`, 180, finalY, { align: "right" });
+    // doc.text(`${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(subtotal)} VNĐ`, 180, finalY, { align: "right" });
+    
 
     if (order.discount) {
       doc.text(`Giảm giá: -${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(discountAmount)} VNĐ`, 180, finalY + 8, { align: "right" });
     }
 
+    // doc.setFont("TimesNewRoman", "bold");
+    // doc.text(`TỔNG THANH TOÁN: ${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(total)} VNĐ`, 180, finalY + 20, { align: "right" });
+    const totalPaid = order.paidAmount ?? 0;
+
     doc.setFont("TimesNewRoman", "bold");
-    doc.text(`TỔNG THANH TOÁN: ${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(total)} VNĐ`, 180, finalY + 20, { align: "right" });
+    doc.text(
+      `TỔNG THANH TOÁN: ${new Intl.NumberFormat("vi-VN", {
+        style: "decimal",
+        maximumFractionDigits: 0
+      }).format(totalPaid)} VNĐ`,
+      180,
+      finalY + 20,
+      { align: "right" }
+    );
+
 
     doc.save(`Hoa_don_${order.id}_${dayjs().format("DDMMYYYY")}.pdf`);
   };
@@ -455,7 +471,7 @@ const OrderManagement = () => {
     );
 
     // Preserve existing "update status" button logic (as before)
-    if (record.status !== "CANCELLED" && record.status !== "COMPLETED" && record.status !== "REJECTED_RETURNED" && record.status !== "PENDING_RETURNED" && record.status !== "CONFIRMED_RETURNED" && record.status !== "SHIPPED_RETURNED") {
+    if (record.status !== "RETURNED" && record.status !== "CANCELLED" && record.status !== "COMPLETED" && record.status !== "REJECTED_RETURNED" && record.status !== "PENDING_RETURNED" && record.status !== "CONFIRMED_RETURNED" && record.status !== "SHIPPED_RETURNED") {
       elems.push(
         <Button key="update" type="primary" style={{ background: "#52c41a", borderRadius: 4 }} icon={<EditOutlined />} onClick={() => { setCurrentOrder(record); form.setFieldsValue({ status: record.status }); setIsStatusModalVisible(true); }} size="middle" title="Cập nhật trạng thái" />
       );
@@ -586,21 +602,36 @@ const OrderManagement = () => {
       width: 150,
       render: (date) => (date ? dayjs(date).format("DD/MM/YYYY HH:mm") : "-")
     },
+    // {
+    //   title: "Tổng tiền",
+    //   key: "totalAmount",
+    //   width: 150,
+    //   render: (_, record) => {
+    //     const subtotal = record.orderItems?.reduce((total, item) => total + item.priceAtOrderTime * item.quantity, 0) || 0;
+    //     const discountAmount = record.discount ? calculateDiscountAmount(record) : 0;
+    //     const total = subtotal - discountAmount;
+    //     return (
+    //       <span style={{ fontWeight: "bold", color: "#ff4d4f" }}>
+    //         {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(total)}
+    //       </span>
+    //     );
+    //   }
+    // },
     {
-      title: "Tổng tiền",
-      key: "totalAmount",
-      width: 150,
-      render: (_, record) => {
-        const subtotal = record.orderItems?.reduce((total, item) => total + item.priceAtOrderTime * item.quantity, 0) || 0;
-        const discountAmount = record.discount ? calculateDiscountAmount(record) : 0;
-        const total = subtotal - discountAmount;
-        return (
-          <span style={{ fontWeight: "bold", color: "#ff4d4f" }}>
-            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(total)}
-          </span>
-        );
-      }
-    },
+  title: "Tổng tiền",
+    key: "totalAmount",
+    width: 150,
+    render: (_, record) => (
+      <span style={{ fontWeight: "bold", color: "#ff4d4f" }}>
+        {new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+          maximumFractionDigits: 0
+        }).format(getFinalPaidAmount(record))}
+      </span>
+    )
+  },
+
     {
       title: "Thao tác",
       key: "actions",
@@ -609,6 +640,29 @@ const OrderManagement = () => {
       render: (_, record) => renderActions(record)
     }
   ];
+
+  const getFinalPaidAmount = (order) => {
+  if (!order) return 0;
+
+  // Ưu tiên tuyệt đối số tiền backend trả về
+  if (order.paidAmount != null) {
+    return order.paidAmount;
+  }
+
+  // Fallback (chỉ khi backend chưa có paidAmount)
+  const subtotal =
+    order.orderItems?.reduce(
+      (total, item) => total + item.priceAtOrderTime * item.quantity,
+      0
+    ) || 0;
+
+  const discount = order.discount
+    ? calculateDiscountAmount(order)
+    : 0;
+
+  return subtotal - discount;
+};
+
 
   return (
     <ConfigProvider
@@ -703,7 +757,7 @@ const OrderManagement = () => {
             currentOrder && currentOrder.status === "COMPLETED" && (
               <Button key="export" type="primary" icon={<FilePdfOutlined />} onClick={() => exportInvoiceToPdf(currentOrder)}>Xuất hoá đơn</Button>
             ),
-            currentOrder && currentOrder.status !== "CANCELLED" && currentOrder.status !== "COMPLETED" && (
+            currentOrder && currentOrder.status !== "RETURNED" && currentOrder.status !== "CANCELLED" && currentOrder.status !== "COMPLETED" && currentOrder.status !== "REJECTED_RETURNED" && currentOrder.status !== "PENDING_RETURNED" && currentOrder.status !== "CONFIRMED_RETURNED" && currentOrder.status !== "SHIPPED_RETURNED" &&(
               <Button key="update" type="primary" onClick={() => { 
                 setIsDetailModalVisible(false); 
                 setIsStatusModalVisible(true); 
@@ -826,11 +880,19 @@ const OrderManagement = () => {
 
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <span style={{ fontWeight: "bold" }}>Tổng thanh toán:</span>
-                        <span style={{ fontWeight: "bold", fontSize: 18, color: "#ff4d4f" }}>
+                        {/* <span style={{ fontWeight: "bold", fontSize: 18, color: "#ff4d4f" }}>
                           {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(
                             currentOrder.orderItems.reduce((total, item) => total + item.priceAtOrderTime * item.quantity, 0) - calculateDiscountAmount(currentOrder)
                           )}
+                        </span> */}
+                        <span style={{ fontWeight: "bold", fontSize: 18, color: "#ff4d4f" }}>
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                            maximumFractionDigits: 0
+                          }).format(getFinalPaidAmount(currentOrder))}
                         </span>
+
                       </div>
                     </Card>
                   </div>

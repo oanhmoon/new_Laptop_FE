@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'; // Import dispatch to trigger Redux a
 import { changePassword } from '../../Redux/actions/UserThunk'; // Import changePassword action
 import "./changepass.css";
 import { FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
+import { message } from 'antd';
 
 const ChangePasswordModal = ({ isOpen, onClose }) => {
     const dispatch = useDispatch(); // Initialize the Redux dispatch
@@ -14,6 +15,18 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
+
+
+    const isStrongPassword = (password) => {
+        const minLength = password.length >= 8;
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasUppercase = /[A-Z]/.test(password);
+
+        return minLength && hasSpecialChar && hasNumber && hasUppercase;
+    };
+
 
     // Reset form when closing modal
     const handleClose = () => {
@@ -25,27 +38,126 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         onClose();
     };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     if (newPassword !== confirmPassword) {
+    //         setError('Mật khẩu xác nhận không khớp');
+    //         return;
+    //     }
+
+    //     setIsLoading(true);
+    //     setError(''); // Reset error before making the API call
+    //     try {
+    //         const result = await dispatch(changePassword(currentPassword, newPassword, confirmPassword));
+    //         console.log(result); // Check the result here
+    //         setIsLoading(false);
+    //         handleClose(); // Close modal after successful password change
+    //     } catch (error) {
+    //         console.error("Đã xảy ra lỗi:", error);
+    //         setError('Đã xảy ra lỗi khi thay đổi mật khẩu');
+    //         setIsLoading(false);
+    //     }
+    // };
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     if (newPassword !== confirmPassword) {
+    //         setError('Mật khẩu xác nhận không khớp');
+    //         return;
+    //     }
+
+    //     if (!isStrongPassword(newPassword)) {
+    //         setError(
+    //             'Mật khẩu mới phải có ít nhất 8 ký tự, gồm chữ hoa, số và ký tự đặc biệt'
+    //         );
+    //         return;
+    //     }
+
+    //     setIsLoading(true);
+    //     setError('');
+
+    //     // try {
+    //     //     await dispatch(changePassword(currentPassword, newPassword, confirmPassword));
+    //     //     handleClose();
+    //     // } catch (err) {
+    //     //     // BẮT LỖI BACKEND
+    //     //     if (err?.response?.data?.message) {
+    //     //         setError(err.response.data.message);
+    //     //     } else {
+    //     //         setError('Đã xảy ra lỗi khi thay đổi mật khẩu');
+    //     //     }
+    //     // } finally {
+    //     //     setIsLoading(false);
+    //     // }
+    //     try {
+    //         const res = await dispatch(
+    //             changePassword(currentPassword, newPassword, confirmPassword)
+    //         );
+
+    //         console.log("CHANGE PASSWORD RESPONSE:", res);
+
+    //         message.success(res?.message || "Đổi mật khẩu thành công");
+
+    //         setTimeout(() => {
+    //             handleClose();
+    //         }, 1000); 
+
+    //         } catch (err) {
+    //         if (err?.response?.data?.message) {
+    //             setError(err.response.data.message);
+    //         } else {
+    //             setError("Đã xảy ra lỗi khi thay đổi mật khẩu");
+    //         }
+    //         } finally {
+    //         setIsLoading(false);
+    //         }
+
+
+    // };
     const handleSubmit = async (e) => {
-        e.preventDefault();
+  e.preventDefault();
 
-        if (newPassword !== confirmPassword) {
-            setError('Mật khẩu xác nhận không khớp');
-            return;
-        }
+  if (newPassword !== confirmPassword) {
+    setError("Mật khẩu xác nhận không khớp");
+    return;
+  }
 
-        setIsLoading(true);
-        setError(''); // Reset error before making the API call
-        try {
-            const result = await dispatch(changePassword(currentPassword, newPassword, confirmPassword));
-            console.log(result); // Check the result here
-            setIsLoading(false);
-            handleClose(); // Close modal after successful password change
-        } catch (error) {
-            console.error("Đã xảy ra lỗi:", error);
-            setError('Đã xảy ra lỗi khi thay đổi mật khẩu');
-            setIsLoading(false);
-        }
-    };
+  if (!isStrongPassword(newPassword)) {
+    setError(
+      "Mật khẩu mới phải có ít nhất 8 ký tự, gồm chữ hoa, số và ký tự đặc biệt"
+    );
+    return;
+  }
+
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const res = await dispatch(
+      changePassword(currentPassword, newPassword, confirmPassword)
+    );
+
+    console.log("CHANGE PASSWORD RESPONSE:", res);
+
+    messageApi.success(res?.message || "Đổi mật khẩu thành công");
+
+    setTimeout(() => {
+      handleClose();
+    }, 1000); // 1s như bạn muốn
+
+  } catch (err) {
+    if (err?.response?.data?.message) {
+      setError(err.response.data.message);
+    } else {
+      setError("Đã xảy ra lỗi khi thay đổi mật khẩu");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
     const togglePasswordVisibility = (field) => {
         if (field === 'current') setShowCurrentPassword(!showCurrentPassword);
@@ -56,6 +168,8 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
+        <>
+    {contextHolder}
         <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close" onClick={handleClose}>
@@ -116,6 +230,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                 </form>
             </div>
         </div>
+        </>
     );
 };
 

@@ -47,24 +47,29 @@ export const loginUser = (credentials) => async (dispatch) => {
 };
 
 // ---------------- CHANGE PASSWORD ----------------
-export const changePassword = (current, newPassword, confirmPassword) => async (dispatch) => {
+export const changePassword =
+  (current, newPassword, confirmPassword) => async (dispatch) => {
     try {
-        const res = await userService.changePassword(current, newPassword, confirmPassword);
+      await userService.changePassword(
+        current,
+        newPassword,
+        confirmPassword
+      );
 
-        if (res && res.data) {
-            dispatch({
-                type: "ChangePassword",
-                payload: res.data,
-            });
-            return res.data;
-        } else {
-            throw new Error('Dữ liệu không hợp lệ');
-        }
+      dispatch({
+        type: "ChangePassword"
+      });
+
+      
+      return {
+        message: "Đổi mật khẩu thành công"
+      };
     } catch (error) {
-        console.error("Đã xảy ra lỗi:", error);
-        throw error;
+      throw error;
     }
-};
+  };
+
+
 
 // ---------------- REGISTER ----------------
 export const register = (username, password, fullName, email) => async (dispatch) => {
@@ -110,23 +115,41 @@ export const getUserByUsername = (username) => async (dispatch) => {
 };
 
 // ---------------- GET USER BALANCE ----------------
+// export const getUserBalance = (id) => async (dispatch) => {
+//     try {
+//         const res = await userService.getBalanceOfUser(id);
+
+//         if (res) {
+//             dispatch({
+//                 type: "Balance",
+//                 payload: res,
+//             });
+//             return res;
+//         } else {
+//             throw new Error('Dữ liệu không hợp lệ');
+//         }
+//     } catch (error) {
+//         console.error("Đã xảy ra lỗi:", error);
+//     }
+// };
 export const getUserBalance = (id) => async (dispatch) => {
     try {
         const res = await userService.getBalanceOfUser(id);
 
-        if (res) {
+        if (res?.code === 200) {
             dispatch({
-                type: "Balance",
-                payload: res,
+                type: "SET_USER_BALANCE",
+                payload: res.data, // ✅ CHỈ LẤY SỐ
             });
-            return res;
+            return res.data;
         } else {
-            throw new Error('Dữ liệu không hợp lệ');
+            throw new Error("Không lấy được số dư");
         }
     } catch (error) {
-        console.error("Đã xảy ra lỗi:", error);
+        console.error("Lỗi lấy số dư:", error);
     }
 };
+
 
 // ---------------- ADMIN GET ALL USER ----------------
 export const adminGetAllUser = (keyword, page, size, sortDir, sortBy) => async (dispatch) => {
@@ -262,21 +285,59 @@ export const resetPassword = (payload) => async (dispatch) => {
 
 
 // ---------------- REQUEST REGISTER OTP ----------------
-export const requestRegisterOtp = (email) => async (dispatch) => {
+// export const requestRegisterOtp = (email) => async (dispatch) => {
+//   try {
+//     const res = await userService.requestRegisterOtp(email);
+//     if (res) {
+//       dispatch({ type: "REQUEST_REGISTER_OTP_SUCCESS", payload: res });
+//       return res;
+//     } else {
+//       throw new Error("Không nhận được phản hồi hợp lệ từ server");
+//     }
+//   } catch (error) {
+//     console.error("Request OTP lỗi:", error);
+//     const errorMessage = error.response?.data?.message || "Gửi OTP thất bại";
+//     return { error: { message: errorMessage } };
+//   }
+// };
+// export const requestRegisterOtp = (email) => async (dispatch) => {
+//   try {
+//     const res = await userService.requestRegisterOtp(email);
+
+//     dispatch({
+//       type: "REQUEST_REGISTER_OTP_SUCCESS",
+//       payload: res.data, // lưu gì cũng được
+//     });
+
+//     return res; // ✅ QUAN TRỌNG: trả về TOÀN BỘ response
+//   } catch (error) {
+//     return {
+//       error: {
+//         message: error.response?.data?.message || "Gửi OTP thất bại",
+//       },
+//     };
+//   }
+// };
+
+export const requestRegisterOtp = (registerData) => async (dispatch) => {
   try {
-    const res = await userService.requestRegisterOtp(email);
-    if (res) {
-      dispatch({ type: "REQUEST_REGISTER_OTP_SUCCESS", payload: res });
-      return res;
-    } else {
-      throw new Error("Không nhận được phản hồi hợp lệ từ server");
-    }
+    const res = await userService.requestRegisterOtp(registerData);
+
+    dispatch({
+      type: "REQUEST_REGISTER_OTP_SUCCESS",
+      payload: res.data,
+    });
+
+    return res;
   } catch (error) {
-    console.error("Request OTP lỗi:", error);
-    const errorMessage = error.response?.data?.message || "Gửi OTP thất bại";
-    return { error: { message: errorMessage } };
+    return {
+      error: {
+        message: error.response?.data?.message || "Gửi OTP thất bại",
+      },
+    };
   }
 };
+
 
 // ---------------- VERIFY REGISTER OTP ----------------
 export const verifyRegisterOtp = (email, otp) => async (dispatch) => {
@@ -303,7 +364,7 @@ export const confirmRegister = (username, password, fullName, email) => async (d
       dispatch({ type: "CONFIRM_REGISTER_SUCCESS", payload: res.data });
       return res.data;
     } else {
-      return { error: { message: "OTP không hợp lệ" } };
+      return { error: { message: "OTP bạn nhập không chính xác hoặc đã hết hạn" } };
     }
   } catch (error) {
     console.error("Confirm Register lỗi:", error);

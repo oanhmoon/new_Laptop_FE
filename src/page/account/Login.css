@@ -261,3 +261,14 @@
 .animate-spin {
     animation: spin 1s linear infinite;
 }
+/* Ẩn icon hiện mật khẩu mặc định của trình duyệt */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  position: absolute;
+  right: 0;
+}

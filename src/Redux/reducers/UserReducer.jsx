@@ -30,6 +30,15 @@ export const UserReducer = (state = initialState, action) => {
                 ...state,
                 drawlList: action.payload,
             }
+        case "SET_USER_BALANCE":
+            return {
+                ...state,
+                userData: {
+                    ...state.userData,
+                    balance: action.payload,
+                },
+            }
+
         default:
             return {...state}
     }

@@ -175,45 +175,114 @@ export const adminDetailProduct = (productId) => async (dispatch) => {
     }
 };
 
+// export const adminCreateProduct = (product) => async (dispatch) => {
+//     try {
+//         dispatch({ type: "PRODUCT_ADMIN_CREATE_REQUEST" });
+//         const response = await productService.adminCreateProduct(product);
+//         if (response && response.code === 201) {
+//             dispatch({
+//                 type: "PRODUCT_ADMIN_CREATE_SUCCESS",
+//                 payload: response.code,
+//             });
+//         } else {
+//             console.log("Product creation failed");
+//         }
+//         return response.code;
+//     } catch (error) {
+//         dispatch({
+//             type: "PRODUCT_ADMIN_CREATE_FAILURE",
+//             payload: error.response?.data?.message || error.message
+//         });
+//     }
+// };
+// export const adminCreateProduct = (product) => async (dispatch) => {
+//     try {
+//         dispatch({ type: "PRODUCT_ADMIN_CREATE_REQUEST" });
+
+//         const response = await productService.adminCreateProduct(product);
+
+//         dispatch({
+//             type: "PRODUCT_ADMIN_CREATE_SUCCESS",
+//             payload: response.status,
+//         });
+
+//         return response.status; // 201
+//     } catch (error) {
+//         dispatch({
+//             type: "PRODUCT_ADMIN_CREATE_FAILURE",
+//             payload: error.response?.data?.message || error.message
+//         });
+
+//         throw error; 
+//     }
+// };
 export const adminCreateProduct = (product) => async (dispatch) => {
-    try {
-        dispatch({ type: "PRODUCT_ADMIN_CREATE_REQUEST" });
-        const response = await productService.adminCreateProduct(product);
-        if (response && response.code === 201) {
-            dispatch({
-                type: "PRODUCT_ADMIN_CREATE_SUCCESS",
-                payload: response.code,
-            });
-        } else {
-            console.log("Product creation failed");
-        }
-        return response.code;
-    } catch (error) {
-        dispatch({
-            type: "PRODUCT_ADMIN_CREATE_FAILURE",
-            payload: error.response?.data?.message || error.message
-        });
-    }
+  try {
+    dispatch({ type: "PRODUCT_ADMIN_CREATE_REQUEST" });
+
+    const response = await productService.adminCreateProduct(product);
+    // response === product object
+
+    dispatch({
+      type: "PRODUCT_ADMIN_CREATE_SUCCESS",
+      payload: response
+    });
+
+    return response;
+  } catch (error) {
+    dispatch({
+      type: "PRODUCT_ADMIN_CREATE_FAILURE",
+      payload: error.response?.data?.message || error.message
+    });
+    throw error;
+  }
 };
 
+
+
+
+// export const adminUpdateProduct = (productId, product) => async (dispatch) => {
+//     try {
+//         dispatch({ type: "PRODUCT_ADMIN_UPDATE_REQUEST" });
+//         const response = await productService.adminUpdateProduct(productId, product);
+//         if (response && response.code === 200) {
+//             dispatch({
+//                 type: "PRODUCT_ADMIN_UPDATE_SUCCESS",
+//                 payload: response.code,
+//             });
+//         } else {
+//             console.log("Product update failed");
+//         }
+//         return response.code;
+//     } catch (error) {
+//         dispatch({
+//             type: "PRODUCT_ADMIN_UPDATE_FAILURE",
+//             payload: error.response?.data?.message || error.message
+//         });
+//     }
+// };
 export const adminUpdateProduct = (productId, product) => async (dispatch) => {
     try {
         dispatch({ type: "PRODUCT_ADMIN_UPDATE_REQUEST" });
         const response = await productService.adminUpdateProduct(productId, product);
-        if (response && response.code === 200) {
-            dispatch({
-                type: "PRODUCT_ADMIN_UPDATE_SUCCESS",
-                payload: response.code,
-            });
-        } else {
-            console.log("Product update failed");
-        }
-        return response.code;
+
+        dispatch({
+            type: "PRODUCT_ADMIN_UPDATE_SUCCESS",
+            payload: response.status, // code 200
+        });
+
+        return response.status;
     } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+
         dispatch({
             type: "PRODUCT_ADMIN_UPDATE_FAILURE",
-            payload: error.response?.data?.message || error.message
+            payload: message
         });
+
+        
+        throw { status, message };
     }
 };
 

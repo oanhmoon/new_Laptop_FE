@@ -7,6 +7,7 @@ import {ProductReducer} from "./reducers/ProductReducer";
 import {OrderReducer} from "./reducers/OrderReducer";
 import {MessageReducer} from "./reducers/MessageReducer";
 import {chatReducer} from "./reducers/chatReducer";
+import { CartReducer } from "./reducers/CartReducer";
 
 const rootReducer = combineReducers({
     UserReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
     MessageReducer,
     LocationReducer,
     chatReducer,
+    CartReducer,
 });
 
 const store = legacy_createStore(rootReducer, applyMiddleware(thunk));

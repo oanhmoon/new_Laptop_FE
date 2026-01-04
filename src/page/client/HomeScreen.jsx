@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+
+
 import { USER_LOGIN } from "../../Utils/Setting/Config";
 import { useSelector } from "react-redux";
 import HeroSection from "./HeroSection";
@@ -32,6 +34,7 @@ const HomeScreen = () => {
       }
     }
   }, [isAuthenticated]);
+  
 
   const toggleChatBox = () => {
     if (!userData) {
@@ -79,6 +82,9 @@ const HomeScreen = () => {
 
       {/* Chat cũ */}
       <ChatBox showChatBox={showChatBox} toggleChatBox={toggleChatBox} />
+      
+
+
 
       {/* Icon Chat mới (OpenAI) */}
       <div 

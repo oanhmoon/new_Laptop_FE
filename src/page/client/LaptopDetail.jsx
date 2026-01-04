@@ -63,18 +63,19 @@ const LaptopDetail = () => {
         pageSize: 5,
         totalElements: 0
     });
+    
     const fetchProductDetail = async (optionId) => {
         try {
             setLoading(true);
             const response = await dispatch(getProductDetailById(optionId));
             console.log("📦 Dữ liệu productDetail trả về từ API:", response);
-    console.log("🖼️ Danh sách ảnh:", response?.product?.images);
-    console.log("🎨 Danh sách variant:", response?.productVariants);
+            console.log("🖼️ Danh sách ảnh:", response?.product?.images);
+            console.log("🎨 Danh sách variant:", response?.productVariants);
 
             setProductDetail(response);
-            if (response?.productOptions?.length > 0) {
-    setOptionId(response.productOptions[0].id);
-}
+            // if (response?.productOptions?.length > 0) {
+            //     setOptionId(response.productOptions[0].id);
+            // }
             const selectedOptionIndex = response?.productOptions.findIndex(option => option.id.toString() === id.toString());
 
             if (selectedOptionIndex !== -1) {
@@ -315,9 +316,31 @@ const LaptopDetail = () => {
 
 
 
+// useEffect(() => {
+//   fetchProductDetail(id);
+// }, [id]);
 useEffect(() => {
-  fetchProductDetail(id);
+  const loadData = async () => {
+    const res = await fetchProductDetail(id);
+
+    if (!res) return;
+
+    const index = res.productOptions.findIndex(
+      opt => opt.id.toString() === id.toString()
+    );
+
+    if (index !== -1) {
+      setSelectedOption(index);
+      setOptionId(res.productOptions[index].id);
+    } else {
+      setSelectedOption(0);
+      setOptionId(res.productOptions[0].id);
+    }
+  };
+
+  loadData();
 }, [id]);
+
 
 useEffect(() => {
   if (!userData?.id || !optionId) return;
@@ -357,25 +380,46 @@ useEffect(() => {
             </div>
         );
     }
+    // const handleBuyNow = async () => {
+    //     if(varientId) {
+    //         console.log(varientId);
+    //         const result = await dispatch(insertCartItem({
+    //             quantity: 1,
+    //             productVariantId: varientId,
+    //             userId: userData?.id,
+    //         }));
+    //         if (result === 200) {
+    //             window.location.href = `http://localhost:3000/cart/${userData?.id}`;
+    //         } else {
+    //             notification.error({
+    //                 message: "Lỗi",
+    //                 description: "Không thể thêm vào giỏ hàng",
+    //                 placement: "topRight",
+    //             });
+    //         }
+    //     }
+    // };
     const handleBuyNow = async () => {
-        if(varientId) {
-            console.log(varientId);
-            const result = await dispatch(insertCartItem({
+        if (!varientId) return;
+
+        try {
+            await dispatch(insertCartItem({
                 quantity: 1,
                 productVariantId: varientId,
                 userId: userData?.id,
             }));
-            if (result === 200) {
-                window.location.href = `http://localhost:3000/cart/${userData?.id}`;
-            } else {
-                notification.error({
-                    message: "Lỗi",
-                    description: "Không thể thêm vào giỏ hàng",
-                    placement: "topRight",
-                });
-            }
+
+            window.location.href = `http://localhost:3000/cart/${userData?.id}`;
+
+        } catch (err) {
+            notification.error({
+                message: "Lỗi",
+                description: err.message,
+                placement: "topRight",
+            });
         }
     };
+
     const handleFavorite = async () => {
     if (!userData) {
         notification.warning({
@@ -408,27 +452,51 @@ useEffect(() => {
 };
     
 
+    // const handleAddCart = async () => {
+    //     if(varientId) {
+    //         console.log(varientId);
+    //         const result = await dispatch(insertCartItem({
+    //             quantity: 1,
+    //             productVariantId: varientId,
+    //             userId: userData?.id,
+    //         }));
+    //         if (result === 200) {
+    //             notification.success({
+    //                 message: 'Thành công',
+    //                 description: 'Đã thêm sản phẩm vào giỏ hàng',
+    //                 placement: 'topRight',
+    //             });
+    //         } else {
+    //             notification.error({
+    //                 message: "Lỗi",
+    //                 description: "Vui lòng đăng nhập để sử dụng chức năng",
+    //                 placement: "topRight",
+    //             });
+    //         }
+    //     }
+    // };
     const handleAddCart = async () => {
-        if(varientId) {
-            console.log(varientId);
-            const result = await dispatch(insertCartItem({
+        if (!varientId) return;
+
+        try {
+            await dispatch(insertCartItem({
                 quantity: 1,
                 productVariantId: varientId,
                 userId: userData?.id,
             }));
-            if (result === 200) {
-                notification.success({
-                    message: 'Thành công',
-                    description: 'Đã thêm sản phẩm vào giỏ hàng',
-                    placement: 'topRight',
-                });
-            } else {
-                notification.error({
-                    message: "Lỗi",
-                    description: "Số lượng còn lại hiện tại không đủ",
-                    placement: "topRight",
-                });
-            }
+
+            notification.success({
+                message: 'Thành công',
+                description: 'Đã thêm sản phẩm vào giỏ hàng',
+                placement: 'topRight',
+            });
+
+        } catch (err) {
+            notification.error({
+                message: "Lỗi",
+                description: err.message, // ⭐ QUAN TRỌNG
+                placement: "topRight",
+            });
         }
     };
 
@@ -515,8 +583,17 @@ useEffect(() => {
                 {/* Right column - Details */}
                 <div className="product-info">
                     <div className="product-header">
-                        <h1 className="product-title">{productDetail.product.name}</h1>
-                        
+                        {/* <h1 className="product-title">{productDetail.product.name}</h1> */}
+                        <h1 className="product-title">
+                            {productDetail.product.name}
+                            {productDetail.productOptions[selectedOption] && (
+                                <span>
+                                {" – "}
+                                {productDetail.productOptions[selectedOption].code}
+                                </span>
+                            )}
+                        </h1>
+
                         <div className="rating-container">
                             <div className="stars">
                                 {renderStars(productDetail?.ratingAverage, productDetail?.totalRating)}
@@ -831,22 +908,7 @@ useEffect(() => {
     );
 };
 
-// Helper function to convert color names to hex values
-const getColorHex = (colorName) => {
-    const colorMap = {
-        'Silver': '#C0C0C0',
-        'Black': '#1a1a1a',
-        'Blue': '#0066cc',
-        'Red': '#ff0000',
-        'Gold': '#ffd700',
-        'White': '#ffffff',
-        'Gray': '#808080',
-        'Space Gray': '#717378',
-        'Rose Gold': '#b76e79',
-        'Green': '#008000',
-        'Pink': '#ffc0cb'
-    };
-    return colorMap[colorName] || '#1a1a1a';
-};
+
+
 
 export default LaptopDetail;

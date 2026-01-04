@@ -208,11 +208,19 @@ const BrandManagement = () => {
         }
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      notification.error({
-        message: 'Đã xảy ra lỗi',
-        description: 'Không thể xử lý yêu cầu này.'
-      });
+        if (error.response?.status === 409) {
+          notification.error({
+            message: 'Nhãn hàng đã tồn tại',
+            //description: error.response.data?.message || 'Tên nhãn hàng đã tồn tại.'
+          });
+          return;
+        }
+
+        notification.error({
+          message: 'Đã xảy ra lỗi',
+          description: 'Không thể xử lý yêu cầu này.'
+        });
+
     } finally {
       setFormSubmitting(false); // Reset loading state when form submission completes
     }

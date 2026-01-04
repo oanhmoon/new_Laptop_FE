@@ -187,11 +187,19 @@ const CategoryManagement = () => {
         }
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      notification.error({
-        message: 'Đã xảy ra lỗi',
-        description: 'Không thể xử lý yêu cầu này.'
-      });
+        if (error.response?.status === 409) {
+          notification.error({
+            message: 'Thể loại đã tồn tại',
+            //description: error.response.data?.message || 'Tên thể loại đã tồn tại.'
+          });
+          return;
+        }
+
+        notification.error({
+          message: 'Đã xảy ra lỗi',
+          description: 'Không thể xử lý yêu cầu này.'
+        });
+      
     } finally {
       setFormSubmitting(false); // Reset loading state when form submission completes
     }

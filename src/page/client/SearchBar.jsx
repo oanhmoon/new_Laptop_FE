@@ -118,7 +118,7 @@ const SearchBar = () => {
                 />
             </form>
 
-            {isPreviewVisible && (
+            {/* {isPreviewVisible && (
                 <div className="search-preview">
                     {searchQuery ? (
                         <>
@@ -187,7 +187,7 @@ const SearchBar = () => {
                         </>
                     )}
                 </div>
-            )}
+            )} */}
         </div>
     );
 };

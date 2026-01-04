@@ -67,24 +67,47 @@ const RegisterModal = ({ isOpen, onClose }) => {
     return true;
   };
 
-  const handleRequestOtp = async () => {
-    if (!validateBeforeOtp()) return;
+  // const handleRequestOtp = async () => {
+  //   if (!validateBeforeOtp()) return;
 
-    setIsLoading(true);
-    try {
-      const res = await dispatch(requestRegisterOtp(form.email));
-      if (res?.error) {
-        setError(res.error.message);
-      } else {
-        setSuccess(res.message || "OTP đã được gửi đến email!");
-        setStep(2);
-      }
-    } catch (err) {
-      setError(err.message || "Gửi OTP thất bại");
-    } finally {
-      setIsLoading(false);
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await dispatch(requestRegisterOtp(form.email));
+  //     if (res?.error) {
+  //       setError(res.error.message);
+  //     } else {
+  //       setSuccess(res.message || "OTP đã được gửi đến email!");
+  //       setStep(2);
+  //     }
+  //   } catch (err) {
+  //     setError(err.message || "Gửi OTP thất bại");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  const handleRequestOtp = async () => {
+  if (!validateBeforeOtp()) return;
+
+  setIsLoading(true);
+  try {
+    // Gửi cả username + email
+    const res = await dispatch(
+      requestRegisterOtp({ username: form.username, email: form.email })
+    );
+
+    if (res?.error) {
+      setError(res.error.message);
+    } else {
+      setSuccess(res.message || "OTP đã được gửi đến email!");
+      setStep(2);
     }
-  };
+  } catch (err) {
+    setError(err.message || "Gửi OTP thất bại");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleVerifyOtp = async () => {
     if (!form.otp) {

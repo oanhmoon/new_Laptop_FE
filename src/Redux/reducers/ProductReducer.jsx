@@ -108,6 +108,31 @@ export const ProductReducer = (state = initialState, action) => {
                     error: action.payload
                 }
             };
+        case "PRODUCT_ADMIN_CREATE_REQUEST":
+    return {
+        ...state,
+        loading: true,
+        error: null
+    };
+
+case "PRODUCT_ADMIN_CREATE_SUCCESS":
+    return {
+        ...state,
+        loading: false,
+        error: null,
+        products: {
+            ...state.products,
+            content: [action.payload, ...state.products.content] // optional
+        }
+    };
+
+case "PRODUCT_ADMIN_CREATE_FAILURE":
+    return {
+        ...state,
+        loading: false,
+        error: action.payload
+    };
+
 
         default:
             return state;
