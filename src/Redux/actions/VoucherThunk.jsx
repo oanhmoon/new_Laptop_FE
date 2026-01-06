@@ -61,22 +61,37 @@ export const getAllVoucher = (keyword, discountType, isActive, startDate, endDat
     }
 };
 
+// export const createVoucher = (data) => async (dispatch) => {
+//     try {
+//         const res = await voucherService.createVoucher(data);
+
+//         if (res.status === 201) {
+//             dispatch({
+//                 type: "CREATE_VOUCHER",
+//                 payload: res.data.data,
+//             });
+//         }
+
+//         return res.status;
+//     } catch (error) {
+//         return error.response?.status || 500;
+//     }
+// };
 export const createVoucher = (data) => async (dispatch) => {
-    try {
-        const res = await voucherService.createVoucher(data);
+  try {
+    const dataRes = await voucherService.createVoucher(data);
 
-        if (res.status === 201) {
-            dispatch({
-                type: "CREATE_VOUCHER",
-                payload: res.data.data,
-            });
-        }
+    dispatch({
+      type: "CREATE_VOUCHER",
+      payload: dataRes.data ?? dataRes, // tùy BE
+    });
 
-        return res.status;
-    } catch (error) {
-        return error.response?.status || 500;
-    }
+    return true; // ✅ CHỈ CẦN BIẾT LÀ THÀNH CÔNG
+  } catch (error) {
+    throw error; // ❗ QUAN TRỌNG
+  }
 };
+
 
 
 // export const updateVoucher = (id, data) => async (dispatch) => {
@@ -101,22 +116,37 @@ export const createVoucher = (data) => async (dispatch) => {
 //         throw error;
 //     }
 // }
+// export const updateVoucher = (id, data) => async (dispatch) => {
+//     try {
+//         const res = await voucherService.updateVoucher(id, data);
+
+//         if (res.status === 200) {
+//             dispatch({
+//                 type: "UPDATE_VOUCHER",
+//                 payload: res.data.data,
+//             });
+//         }
+
+//         return res.status;
+//     } catch (error) {
+//         return error.response?.status || 500;
+//     }
+// };
 export const updateVoucher = (id, data) => async (dispatch) => {
-    try {
-        const res = await voucherService.updateVoucher(id, data);
+  try {
+    const dataRes = await voucherService.updateVoucher(id, data);
 
-        if (res.status === 200) {
-            dispatch({
-                type: "UPDATE_VOUCHER",
-                payload: res.data.data,
-            });
-        }
+    dispatch({
+      type: "UPDATE_VOUCHER",
+      payload: dataRes.data ?? dataRes,
+    });
 
-        return res.status;
-    } catch (error) {
-        return error.response?.status || 500;
-    }
+    return true;
+  } catch (error) {
+    throw error;
+  }
 };
+
 
 
 // export const deleteVoucher = (id) => async (dispatch) => {
@@ -141,22 +171,37 @@ export const updateVoucher = (id, data) => async (dispatch) => {
 //         throw error;
 //     }
 // }
+// export const deleteVoucher = (id) => async (dispatch) => {
+//     try {
+//         const res = await voucherService.deleteVoucher(id);
+
+//         if (res.status === 204) {
+//             dispatch({
+//                 type: "DELETE_VOUCHER",
+//                 payload: id,
+//             });
+//         }
+
+//         return res.status;
+//     } catch (error) {
+//         if (error.response) {
+//             return error.response.status;
+//         }
+//         return 500;
+//     }
+// };
 export const deleteVoucher = (id) => async (dispatch) => {
-    try {
-        const res = await voucherService.deleteVoucher(id);
+  try {
+    await voucherService.deleteVoucher(id); // ✅ chỉ cần await
 
-        if (res.status === 204) {
-            dispatch({
-                type: "DELETE_VOUCHER",
-                payload: id,
-            });
-        }
+    dispatch({
+      type: "DELETE_VOUCHER",
+      payload: id,
+    });
 
-        return res.status;
-    } catch (error) {
-        if (error.response) {
-            return error.response.status;
-        }
-        return 500;
-    }
+    return true; // ✅ báo thành công
+  } catch (error) {
+    throw error;
+  }
 };
+

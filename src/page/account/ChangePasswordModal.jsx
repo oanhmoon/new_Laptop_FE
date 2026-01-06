@@ -180,44 +180,67 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
                     <div className="form-group">
                         <label htmlFor="currentPassword">Mật khẩu hiện tại</label>
                         <div className="password-input-container">
-                            <input
-                                type={showCurrentPassword ? 'text' : 'password'}
-                                id="currentPassword"
-                                value={currentPassword}
-                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                required
-                                disabled={isLoading}
-                            />
+                          <input
+                            type={showCurrentPassword ? "text" : "password"}
+                            id="currentPassword"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            required
+                            disabled={isLoading}
+                          />
+
+                          <span
+                            className="eye-icon"
+                            onClick={() => togglePasswordVisibility("current")}
+                          >
+                            {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
                         </div>
+
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="newPassword">Mật khẩu mới</label>
                         <div className="password-input-container">
-                            <input
-                                type={showNewPassword ? 'text' : 'password'}
-                                id="newPassword"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                required
-                                disabled={isLoading}
-                            />
+                          <input
+                            type={showNewPassword ? "text" : "password"}
+                            id="newPassword"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
+                            disabled={isLoading}
+                          />
 
+                          <span
+                            className="eye-icon"
+                            onClick={() => togglePasswordVisibility("new")}
+                          >
+                            {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
                         </div>
+
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="confirmPassword">Xác nhận mật khẩu mới</label>
                         <div className="password-input-container">
-                            <input
-                                type={showConfirmPassword ? 'text' : 'password'}
-                                id="confirmPassword"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                                disabled={isLoading}
-                            />
+                          <input
+                            type={showConfirmPassword ? "text" : "password"}
+                            id="confirmPassword"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                            disabled={isLoading}
+                          />
+
+                          <span
+                            className="eye-icon"
+                            onClick={() => togglePasswordVisibility("confirm")}
+                          >
+                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                          </span>
                         </div>
+
                     </div>
 
                     {error && <p className="error-message">{error}</p>}

@@ -15,9 +15,13 @@ export class VoucherService extends baseService {
         return this.get(`api/v1/discounts/page?${params}`, false);
     }
 
-    createVoucher = (data) => {
-        return this.post('api/v1/discounts/create', data, true);
+    // createVoucher = (data) => {
+    //     return this.post('api/v1/discounts/create', data, true);
+    // }
+    createVoucher = async (data) => {
+        return await this.post('api/v1/discounts/create', data);
     }
+
     updateVoucher = (id, data) => {
         return this.put(`api/v1/discounts/update/${id}`, data, true);
     }

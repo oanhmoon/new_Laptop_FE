@@ -149,76 +149,115 @@ const VoucherManagement = () => {
     setIsModalVisible(false);
   };
 
-  const handleSubmit = async () => {
-    try {
-      setFormSubmitting(true); // Set loading state when form submission starts
-      const values = await form.validateFields();
+  // const handleSubmit = async () => {
+  //   try {
+  //     setFormSubmitting(true); // Set loading state when form submission starts
+  //     const values = await form.validateFields();
       
-      const voucherData = {
-        code: values.code,
-        description: values.description,
-        discountType: values.discountType,
-        discountValue: values.discountValue,
-        startDate: values.date[0].format("YYYY-MM-DDTHH:mm:ss"),
-        endDate: values.date[1].format("YYYY-MM-DDTHH:mm:ss"),
-        quantity: values.quantity,
-        isActive: values.isActive
-      };
+  //     const voucherData = {
+  //       code: values.code,
+  //       description: values.description,
+  //       discountType: values.discountType,
+  //       discountValue: values.discountValue,
+  //       startDate: values.date[0].format("YYYY-MM-DDTHH:mm:ss"),
+  //       endDate: values.date[1].format("YYYY-MM-DDTHH:mm:ss"),
+  //       quantity: values.quantity,
+  //       isActive: values.isActive
+  //     };
 
-      if (currentVoucher) {
-        // Update voucher
-        const response = await dispatch(updateVoucher(currentVoucher.id, voucherData));
-        console.log("Update response:", response);
-        if (response === 200) {
-          notification.success({
-            message: 'Cập nhật mã giảm giá thành công',
-            description: 'Mã giảm giá đã được cập nhật thành công.'
-          });
-          fetchVouchers();
-          setIsModalVisible(false);
-        } else if (response === 409) {
-          notification.error({
-            message: 'Mã giảm giá đã tồn tại',
-            description: 'Vui lòng kiểm tra lại thông tin và thử lại.'
-          });
-        } else {
-          notification.error({
-            message: 'Cập nhật mã giảm giá thất bại',
-            description: 'Đã xảy ra lỗi khi cập nhật mã giảm giá.'
-          });
-        }
-      } else {
-        // Create new voucher
-        const response = await dispatch(createVoucher(voucherData));
-        if (response === 201) {
-          notification.success({
-            message: 'Thêm mã giảm giá thành công',
-            description: 'Mã giảm giá đã được thêm thành công.'
-          });
-          fetchVouchers();
-          setIsModalVisible(false);
-        } else if (response === 409) {
-          notification.error({
-            message: 'Mã giảm giá đã tồn tại',
-            description: 'Vui lòng kiểm tra lại thông tin và thử lại.'
-          });
-        } else {
-          notification.error({
-            message: 'Thêm mã giảm giá thất bại',
-            description: 'Đã xảy ra lỗi khi thêm mã giảm giá.'
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      notification.error({
-        message: 'Đã xảy ra lỗi',
-        description: 'Không thể xử lý yêu cầu này.'
-      });
-    } finally {
-      setFormSubmitting(false); // Reset loading state when form submission completes
+  //     if (currentVoucher) {
+  //       // Update voucher
+  //       const response = await dispatch(updateVoucher(currentVoucher.id, voucherData));
+  //       console.log("Update response:", response);
+  //       if (response === 200) {
+  //         notification.success({
+  //           message: 'Cập nhật mã giảm giá thành công',
+  //           description: 'Mã giảm giá đã được cập nhật thành công.'
+  //         });
+  //         fetchVouchers();
+  //         setIsModalVisible(false);
+  //       } else if (response === 409) {
+  //         notification.error({
+  //           message: 'Mã giảm giá đã tồn tại',
+  //           description: 'Vui lòng kiểm tra lại thông tin và thử lại.'
+  //         });
+  //       } else {
+  //         notification.error({
+  //           message: 'Cập nhật mã giảm giá thất bại',
+  //           description: 'Đã xảy ra lỗi khi cập nhật mã giảm giá.'
+  //         });
+  //       }
+  //     } else {
+  //       // Create new voucher
+  //       const response = await dispatch(createVoucher(voucherData));
+  //       if (response === 201) {
+  //         notification.success({
+  //           message: 'Thêm mã giảm giá thành công',
+  //           description: 'Mã giảm giá đã được thêm thành công.'
+  //         });
+  //         fetchVouchers();
+  //         setIsModalVisible(false);
+  //       } else if (response === 409) {
+  //         notification.error({
+  //           message: 'Mã giảm giá đã tồn tại',
+  //           description: 'Vui lòng kiểm tra lại thông tin và thử lại.'
+  //         });
+  //       } else {
+  //         notification.error({
+  //           message: 'Thêm mã giảm giá thất bại',
+  //           description: 'Đã xảy ra lỗi khi thêm mã giảm giá.'
+  //         });
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error);
+  //     notification.error({
+  //       message: 'Đã xảy ra lỗi',
+  //       description: 'Không thể xử lý yêu cầu này.'
+  //     });
+  //   } finally {
+  //     setFormSubmitting(false); // Reset loading state when form submission completes
+  //   }
+  // };
+  const handleSubmit = async () => {
+  setFormSubmitting(true);
+
+  try {
+    const values = await form.validateFields();
+
+    const voucherData = {
+      ...values,
+      startDate: values.date[0].toISOString(),
+      endDate: values.date[1].toISOString(),
+    };
+
+    if (currentVoucher) {
+      await dispatch(updateVoucher(currentVoucher.id, voucherData));
+    } else {
+      await dispatch(createVoucher(voucherData));
     }
-  };
+
+    notification.success({
+      message: currentVoucher
+        ? "Cập nhật mã giảm giá thành công"
+        : "Thêm mã giảm giá thành công",
+    });
+
+    setIsModalVisible(false);
+    setCurrentPage(1);
+    fetchVouchers(); // reload list
+  } catch (err) {
+    console.error("Submit error:", err);
+    notification.error({
+      message: "Đã xảy ra lỗi",
+      description:
+        err?.response?.data?.message || "Không thể xử lý yêu cầu",
+    });
+  } finally {
+    setFormSubmitting(false);
+  }
+};
+
 
   // Show delete confirmation modal
   const showDeleteModal = (voucher) => {
@@ -233,37 +272,64 @@ const VoucherManagement = () => {
   };
 
   // Handle actual deletion when confirmed
+  // const handleDeleteConfirm = async () => {
+  //   if (!voucherToDelete) return;
+
+  //   try {
+  //     setLoading(true);
+  //     const response = await dispatch(deleteVoucher(voucherToDelete.id));
+
+  //     if (response === 204) {
+  //       notification.success({
+  //         message: 'Xóa mã giảm giá thành công',
+  //         description: 'Mã giảm giá đã được xóa thành công.'
+  //       });
+  //       fetchVouchers();
+  //     } else {
+  //       notification.error({
+  //         message: 'Xóa mã giảm giá thất bại',
+  //         description: 'Không thể xóa mã giảm giá này.'
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting voucher:", error);
+  //     notification.error({
+  //       message: 'Đã xảy ra lỗi',
+  //       description: 'Không thể xóa mã giảm giá này.'
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //     setIsDeleteModalVisible(false);
+  //     setVoucherToDelete(null);
+  //   }
+  // };
   const handleDeleteConfirm = async () => {
-    if (!voucherToDelete) return;
+  if (!voucherToDelete) return;
 
-    try {
-      setLoading(true);
-      const response = await dispatch(deleteVoucher(voucherToDelete.id));
+  try {
+    setLoading(true);
 
-      if (response === 204) {
-        notification.success({
-          message: 'Xóa mã giảm giá thành công',
-          description: 'Mã giảm giá đã được xóa thành công.'
-        });
-        fetchVouchers();
-      } else {
-        notification.error({
-          message: 'Xóa mã giảm giá thất bại',
-          description: 'Không thể xóa mã giảm giá này.'
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting voucher:", error);
-      notification.error({
-        message: 'Đã xảy ra lỗi',
-        description: 'Không thể xóa mã giảm giá này.'
-      });
-    } finally {
-      setLoading(false);
-      setIsDeleteModalVisible(false);
-      setVoucherToDelete(null);
-    }
-  };
+    await dispatch(deleteVoucher(voucherToDelete.id)); // ✅
+
+    notification.success({
+      message: 'Xóa mã giảm giá thành công',
+      description: 'Mã giảm giá đã được xóa thành công.'
+    });
+
+    fetchVouchers(); // reload list
+  } catch (error) {
+    console.error("Delete error:", error);
+    notification.error({
+      message: 'Xóa mã giảm giá thất bại',
+      description: 'Không thể xóa mã giảm giá này.'
+    });
+  } finally {
+    setLoading(false);
+    setIsDeleteModalVisible(false);
+    setVoucherToDelete(null);
+  }
+};
+
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';

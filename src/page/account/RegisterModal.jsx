@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
+
 import { useDispatch } from "react-redux";
 import {
   requestRegisterOtp,
@@ -21,6 +23,8 @@ const RegisterModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   // Reset state mỗi khi modal mở/đóng
   useEffect(() => {
@@ -176,14 +180,34 @@ const RegisterModal = ({ isOpen, onClose }) => {
               onChange={handleChange}
               disabled={isLoading}
             />
-            <input
+            {/* <input
               name="password"
               type="password"
               placeholder="Mật khẩu"
               value={form.password}
               onChange={handleChange}
               disabled={isLoading}
-            />
+
+              
+            /> */}
+            <div className="password-field">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Mật khẩu"
+                value={form.password}
+                onChange={handleChange}
+                disabled={isLoading}
+              />
+
+              <span
+                className="eye-icon"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </span>
+            </div>
+
             <input
               name="fullName"
               placeholder="Tên hiển thị"

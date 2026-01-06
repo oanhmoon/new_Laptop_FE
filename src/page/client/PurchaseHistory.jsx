@@ -92,11 +92,12 @@ const PurchaseHistory = () => {
       order.status ||
       order.currentStatus ||
       order?.order?.status,
-    total:
+    total: order.paidAmount ?? (
       order.orderItems.reduce(
         (sum, item) => sum + item.priceAtOrderTime * item.quantity,
         0
-      ) - (order.discount || 0),
+      ) - (order.discount || 0)
+    ),
     
 
     refundReason: order.refundReason,

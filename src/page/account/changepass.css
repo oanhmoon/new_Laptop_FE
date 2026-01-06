@@ -163,3 +163,24 @@
     cursor: not-allowed;
     transform: none;
 }
+.password-input-container {
+  position: relative;
+}
+
+.password-input-container input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+}
+
+.eye-icon:hover {
+  color: #000;
+}

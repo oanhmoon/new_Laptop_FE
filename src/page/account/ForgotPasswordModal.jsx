@@ -4,6 +4,8 @@ import { sendOtp, resetPassword } from "../../Redux/actions/UserThunk";
 import { Loader2, X } from "lucide-react";
 import "./ForgotPasswordModal.css";
 import { message } from "antd";
+import { Eye, EyeOff } from "lucide-react";
+
 
 
 const ForgotPasswordModal = ({ isOpen, onClose, onSwitchToLogin }) => {
@@ -18,6 +20,9 @@ const ForgotPasswordModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   // Reset modal khi đóng
   useEffect(() => {
@@ -178,22 +183,42 @@ const ForgotPasswordModal = ({ isOpen, onClose, onSwitchToLogin }) => {
           />
 
           <label>Mật khẩu mới</label>
-          <input
-            id="newPassword"
-            type="password"
-            value={formData.newPassword}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
+          <div className="password-field">
+            <input
+              id="newPassword"
+              type={showNewPassword ? "text" : "password"}
+              value={formData.newPassword}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
 
-          <label>Xác nhận mật khẩu</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
+            <span
+              className="eye-icon"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </span>
+          </div>
+
+
+          <label>Mật khẩu mới</label>
+          <div className="password-field">
+            <input
+              id="newPassword"
+              type={showNewPassword ? "text" : "password"}
+              value={formData.newPassword}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+
+            <span
+              className="eye-icon"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </span>
+          </div>
+
 
           <button onClick={handleResetPassword} disabled={isLoading}>
             {isLoading ? (
