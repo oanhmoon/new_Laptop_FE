@@ -83,26 +83,27 @@ const PurchaseHistory = () => {
     fetch();
   }, [dispatch, userData?.id]);
 
-  // Normalize
-  const normalizeOrder = (order) => ({
+  
+  const normalizeOrder = (order) => {
+  
+
+  return {
     id: `ORD-${order.orderId}`,
     date: new Date(order.updatedAt || order.createdAt),
+
     status:
       order.orderStatus ||
       order.status ||
       order.currentStatus ||
       order?.order?.status,
-    total: order.paidAmount ?? (
-      order.orderItems.reduce(
-        (sum, item) => sum + item.priceAtOrderTime * item.quantity,
-        0
-      ) - (order.discount || 0)
-    ),
-    
+
+    total: Number(order.paidAmount) || 0,
+    discountAmount: Number(order.discountAmount) || 0,
 
     refundReason: order.refundReason,
-  refundImageUrl: order.refundImageUrl,
-  refundVideoUrl: order.refundVideoUrl,
+    refundImageUrl: order.refundImageUrl,
+    refundVideoUrl: order.refundVideoUrl,
+
     paymentStatus:
       order.paymentStatus ||
       order?.payment?.paymentStatus ||
@@ -113,6 +114,7 @@ const PurchaseHistory = () => {
       order?.payment?.paymentMethod ||
       order?.payment?.provider ||
       order?.paymentInfo?.paymentMethod,
+
     items: order.orderItems.map((i) => ({
       id: i.orderItemId,
       name: i.productName,
@@ -123,7 +125,9 @@ const PurchaseHistory = () => {
       code: i.productCode,
       productOptionId: i.productOptionId || i.productVariantId,
     })),
-  });
+  };
+};
+
 
   // Payment method label
   const getPaymentMethodLabel = (method) => {
@@ -457,6 +461,16 @@ const PurchaseHistory = () => {
                             />
                           </span>
                         </div>
+
+                        {order.discountAmount > 0 && (
+                          <div className="detail-item">
+                            <span className="detail-label">Giảm giá</span>
+                            <span className="detail-value discount">
+                              -{formatPrice(order.discountAmount)}
+                            </span>
+                          </div>
+                        )}
+
 
                         <div className="detail-item">
                           <span className="detail-label">Tổng thanh toán</span>

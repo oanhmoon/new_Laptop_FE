@@ -312,17 +312,17 @@ const OrderManagement = () => {
   };
 
   // Helper for calculating discount and totals (kept same)
-  const calculateDiscountAmount = (order) => {
-    if (!order || !order.discount) return 0;
-    const { discount } = order;
-    const subtotal = order.orderItems.reduce((total, item) => total + item.priceAtOrderTime * item.quantity, 0);
-    if (discount.discountType === "PERCENT") {
-      return (subtotal * discount.discountValue) / 100;
-    } else if (discount.discountType === "FIXED") {
-      return discount.discountValue;
-    }
-    return 0;
-  };
+  // const calculateDiscountAmount = (order) => {
+  //   if (!order || !order.discount) return 0;
+  //   const { discount } = order;
+  //   const subtotal = order.orderItems.reduce((total, item) => total + item.priceAtOrderTime * item.quantity, 0);
+  //   if (discount.discountType === "PERCENT") {
+  //     return (subtotal * discount.discountValue) / 100;
+  //   } else if (discount.discountType === "FIXED") {
+  //     return discount.discountValue;
+  //   }
+  //   return 0;
+  // };
 
   // PDF exporter (kept your previous code)
   const exportInvoiceToPdf = (order) => {
@@ -428,19 +428,33 @@ const OrderManagement = () => {
 
     const finalY = (doc.lastAutoTable?.finalY || tableStartY + 5) + 15;
     const subtotal = order.orderItems.reduce((t, it) => t + it.priceAtOrderTime * it.quantity, 0);
-    const discountAmount = order.discount ? calculateDiscountAmount(order) : 0;
+    //const discountAmount = order.discount ? calculateDiscountAmount(order) : 0;
+    const discountAmount = order.discountAmount ?? 0;
+
     //const total = subtotal - discountAmount;
     
 
 
     doc.setFontSize(11);
-    doc.text("Tổng tiền sản phẩm:", 20, finalY);
+    //doc.text("Tổng tiền sản phẩm:", 20, finalY);
     // doc.text(`${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(subtotal)} VNĐ`, 180, finalY, { align: "right" });
     
 
-    if (order.discount) {
-      doc.text(`Giảm giá: -${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(discountAmount)} VNĐ`, 180, finalY + 8, { align: "right" });
-    }
+    // if (order.discount) {
+    //   doc.text(`Giảm giá: -${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(discountAmount)} VNĐ`, 180, finalY + 8, { align: "right" });
+    // }
+    if (discountAmount > 0) {
+  doc.text(
+    `Giảm giá: -${new Intl.NumberFormat("vi-VN", {
+      style: "decimal",
+      maximumFractionDigits: 0
+    }).format(discountAmount)} VNĐ`,
+    180,
+    finalY + 8,
+    { align: "right" }
+  );
+}
+
 
     // doc.setFont("TimesNewRoman", "bold");
     // doc.text(`TỔNG THANH TOÁN: ${new Intl.NumberFormat("vi-VN", { style: "decimal", maximumFractionDigits: 0 }).format(total)} VNĐ`, 180, finalY + 20, { align: "right" });
@@ -643,6 +657,11 @@ const OrderManagement = () => {
 
   const getFinalPaidAmount = (order) => {
   if (!order) return 0;
+  console.log("===== CALCULATE FINAL PAID =====");
+  console.log("Order ID:", order.id);
+  console.log("paidAmount (BE):", order.paidAmount);
+  console.log("discount:", order.discountAmount);
+  console.log("================================");
 
   // Ưu tiên tuyệt đối số tiền backend trả về
   if (order.paidAmount != null) {
@@ -656,9 +675,7 @@ const OrderManagement = () => {
       0
     ) || 0;
 
-  const discount = order.discount
-    ? calculateDiscountAmount(order)
-    : 0;
+  const discount = order.discountAmount ?? 0;
 
   return subtotal - discount;
 };
@@ -855,6 +872,8 @@ const OrderManagement = () => {
                     </Card>
                   ))}
 
+                  
+
                   {/* Tổng thanh toán */}
                   <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16, marginBottom: 24 }}>
                     <Card style={{ width: 300 }} bodyStyle={{ padding: 16 }}>
@@ -867,14 +886,27 @@ const OrderManagement = () => {
                         </span>
                       </div>
 
-                      {currentOrder.discount && (
+                      {/* {currentOrder.discount && (
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                           <span>Giảm giá{currentOrder.discount.discountType === "PERCENT" ? ` (${currentOrder.discount.discountValue}%)` : ""}:</span>
                           <span style={{ fontWeight: "bold", color: "#52c41a" }}>
                             -{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumFractionDigits: 0 }).format(calculateDiscountAmount(currentOrder))}
                           </span>
                         </div>
+                      )} */}
+                      {currentOrder.discountAmount > 0 && (
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                          <span>Giảm giá:</span>
+                          <span style={{ fontWeight: "bold", color: "#52c41a" }}>
+                            -{new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                              maximumFractionDigits: 0
+                            }).format(currentOrder.discountAmount)}
+                          </span>
+                        </div>
                       )}
+
 
                       <Divider style={{ margin: "8px 0" }} />
 
