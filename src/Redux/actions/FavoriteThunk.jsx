@@ -1,26 +1,18 @@
 import { favoriteService } from "../../Service/FavoriteService";
 
-// export const checkFavorite = (userId, productOptionId) => async () => {
-//     try {
-//         const res = await favoriteService.checkFavorite(userId, productOptionId);
-//         return res.data; // true hoặc false
-//     } catch (error) {
-//         console.error("Error checking favorite:", error);
-//         return false;
-//     }
-// };
+
 export const checkFavorite = (userId, productOptionId) => {
   return async (dispatch) => {
     try {
       const res = await favoriteService.checkFavorite(userId, productOptionId);
-      console.log("✅ checkFavorite API raw:", res);
+      console.log(" checkFavorite API raw:", res);
 
-      // 👉 Nếu API trả về boolean trực tiếp (true/false)
+      //  Nếu API trả về boolean trực tiếp (true/false)
       const result = res === true;
 
-      return result; // ✅ return ra ngoài để dispatch có thể nhận
+      return result; 
     } catch (error) {
-      console.error("❌ Error checking favorite:", error);
+      console.error(" Error checking favorite:", error);
       return false;
     }
   };
@@ -54,12 +46,12 @@ export const removeFavorite = (userId, productOptionId) => async () => {
 export const getAllFavorites = (userId) => async () => {
   try {
     const res = await favoriteService.getAllFavorites(userId);
-    console.log("🐞 API raw response:", res);
+    console.log(" API raw response:", res);
 
-    // ⚠️ Ở đây res là mảng, không có data
+    
     return Array.isArray(res) ? res : res?.data || [];
   } catch (error) {
-    console.error("❌ Error fetching favorites:", error);
+    console.error(" Error fetching favorites:", error);
     return [];
   }
 };

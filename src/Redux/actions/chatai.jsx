@@ -14,6 +14,6 @@ export const sendChat = (message) => async dispatch => {
     } catch (err) {
         const errMsg = err.message || "Lỗi";
         dispatch({ type: CHAT_FAIL, payload: errMsg });
-        throw err; // hoặc return Promise.reject(err)
+        throw err; 
     }
 };

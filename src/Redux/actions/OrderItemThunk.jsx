@@ -2,11 +2,11 @@ import { orderItemService } from "../../Service/OrderItemService";
 
 export const insertOrder = (body) => async (dispatch) => {
     try {
-        console.log("📦 Đang gửi order:", body);
+        console.log(" Đang gửi order:", body);
 
         const response = await orderItemService.insertOrder(body);
 
-        console.log("✅ Phản hồi từ server:", response);
+        console.log(" Phản hồi từ server:", response);
 
         const code = response?.code;
 
@@ -16,17 +16,17 @@ export const insertOrder = (body) => async (dispatch) => {
                 payload: response,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         if (error.response?.data?.message) {
-            console.error("🧨 API Error:", error.response.data.message);
+            console.error(" API Error:", error.response.data.message);
         } else {
-            console.error("🧨 Lỗi không xác định:", error.message);
+            console.error(" Lỗi không xác định:", error.message);
         }
 
         throw error; // Rất quan trọng nếu phía gọi muốn biết lỗi
@@ -43,17 +43,17 @@ export const getAllHistoryOrder = (page,size,orderStatus,sort,userId) => async (
                 payload: response.data,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response.data;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         if (error.response?.data?.message) {
-            console.error("🧨 API Error:", error.response.data.message);
+            console.error(" API Error:", error.response.data.message);
         } else {
-            console.error("🧨 Lỗi không xác định:", error.message);
+            console.error(" Lỗi không xác định:", error.message);
         }
 
         throw error; // Rất quan trọng nếu phía gọi muốn biết lỗi
@@ -71,12 +71,12 @@ export const refundOrder = (orderId) => async (dispatch) => {
                 payload: response,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         throw error;
     }
@@ -92,12 +92,12 @@ export const cancelOrder = (orderId) => async (dispatch) => {
                 payload: response,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         throw error;
     }
@@ -112,12 +112,12 @@ export const getAllOrders = ( startDate, endDate, orderStatus, paymentMethod, pa
                 payload: response.data,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response.data;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         throw error;
     }
@@ -133,12 +133,12 @@ export const updateOrderStatus = (orderId, data) => async (dispatch) => {
                 payload: response.code,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response.code;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         throw error;
     }
@@ -154,12 +154,12 @@ export const revenueByMonth = (year) => async (dispatch) => {
                 payload: response.data,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response.data;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         throw error;
     }
@@ -175,12 +175,12 @@ export const acceptRefund = (id) => async (dispatch) => {
                 payload: response.code,
             });
         } else {
-            console.warn("⚠️ Server không trả về dữ liệu order.");
+            console.warn(" Server không trả về dữ liệu order.");
         }
 
         return response.code;
     } catch (error) {
-        console.error("❌ Lỗi khi gửi đơn hàng:");
+        console.error(" Lỗi khi gửi đơn hàng:");
 
         throw error;
     }
@@ -192,11 +192,11 @@ export const acceptReturn = (id) => async (dispatch) => {
         if(response){
             dispatch({ type: "ACCEPT_RETURN", payload: response.code });
         }else{
-            console.warn("⚠️ Server không trả về dữ liệu acceptReturn.")
+            console.warn(" Server không trả về dữ liệu acceptReturn.")
         }
         return response.code;
     }catch(error){
-        console.error("❌ Lỗi acceptReturn:", error);
+        console.error(" Lỗi acceptReturn:", error);
         throw error;
     }
 };
@@ -207,11 +207,11 @@ export const verifyReturn = (id) => async (dispatch) => {
     if (response) {
       dispatch({ type: "VERIFY_RETURN", payload: response.code });
     } else {
-      console.warn("⚠️ Server không trả về dữ liệu verifyReturn.");
+      console.warn(" Server không trả về dữ liệu verifyReturn.");
     }
     return response.code;
   } catch (error) {
-    console.error("❌ Lỗi verifyReturn:", error);
+    console.error(" Lỗi verifyReturn:", error);
     throw error;
   }
 };
@@ -222,11 +222,11 @@ export const rejectRefund = (id) => async (dispatch) => {
     if (response) {
       dispatch({ type: "REJECT_REFUND", payload: response.code });
     } else {
-      console.warn("⚠️ Server không trả về dữ liệu rejectRefund.");
+      console.warn(" Server không trả về dữ liệu rejectRefund.");
     }
     return response.code;
   } catch (error) {
-    console.error("❌ Lỗi rejectRefund:", error);
+    console.error(" Lỗi rejectRefund:", error);
     throw error;
   }
 };

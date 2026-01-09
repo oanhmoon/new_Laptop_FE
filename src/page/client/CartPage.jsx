@@ -62,6 +62,7 @@ const CartPage = () => {
 
     // fetch cart items
     useEffect(() => {
+        if (!userData?.id) return;
         const fetchCartItems = async () => {
             if (!userData?.id) {
                 setCartItems([]);
@@ -310,7 +311,7 @@ const CartPage = () => {
             setSelectedProducts(prev => prev.filter(itemId => itemId !== id));
             message.success("Xóa sản phẩm thành công");
             // avoid full reload if possible; but keep behavior close to existing code
-            window.location.reload();
+            //window.location.reload();
         } catch (error) {
             notification.error({
                 message: 'Lỗi',
@@ -336,7 +337,7 @@ const CartPage = () => {
                 description: 'Đã xóa tất cả sản phẩm khỏi giỏ hàng',
                 placement: 'topRight',
             });
-            window.location.reload();
+            //window.location.reload();
         } catch (error) {
             notification.error({
                 message: 'Lỗi',
@@ -362,15 +363,21 @@ const CartPage = () => {
         try {
             setUpdatingQuantities(prev => ({ ...prev, [productId]: true }));
 
-            const result = await dispatch(updateCartItemQuantity({
-                id: productId,
-                quantity: newQuantity
-            }));
+            await dispatch(updateCartItemQuantity({
+    id: productId,
+    quantity: newQuantity,
+    userId: userData.id   
+}));
 
-            // your thunk may return different structure — keep existing behavior
-            if (result !== 200) {
-                throw new Error('Số lượng mặt hàng này không đủ');
-            }
+            // const result = await dispatch(updateCartItemQuantity({
+            //     id: productId,
+            //     quantity: newQuantity
+            // }));
+
+            // // your thunk may return different structure — keep existing behavior
+            // if (result !== 200) {
+            //     throw new Error('Số lượng mặt hàng này không đủ');
+            // }
 
             setCartItems(prev => prev.map(item =>
                 item.id === productId ? { ...item, quantity: newQuantity } : item

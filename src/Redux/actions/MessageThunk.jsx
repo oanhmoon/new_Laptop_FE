@@ -29,7 +29,7 @@ export const get_all_users = (page,size) => {
     }
 }
 
-// 🆕 Upload file (ảnh / video)
+// Upload file (ảnh / video)
 export const upload_file_thunk = (file) => {
   return async () => {
     try {
